@@ -17,10 +17,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Controllers\" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\MealsOrderingApplication.Data\MealsOrderingApplication.Data.csproj" />
 		<ProjectReference Include="..\MealsOrderingApplication.Domain\MealsOrderingApplication.Domain.csproj" />
 		<ProjectReference Include="..\MealsOrderingApplication.Services\MealsOrderingApplication.Services.csproj" />

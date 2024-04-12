@@ -2,7 +2,9 @@
 using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Services;
+using MealsOrderingApplication.Services.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,6 +24,11 @@ namespace MealsOrderingApplication.API
 
             // Add Unit Of Work Repository
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+            // Add Repository Services
+            builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+            builder.Services.AddScoped<IMealRepository, MealRepository>();
 
             // Add Identity Config
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

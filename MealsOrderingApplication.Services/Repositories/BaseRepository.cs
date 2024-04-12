@@ -12,48 +12,48 @@ namespace MealsOrderingApplication.Services.Repositories
 
         public readonly ApplicationDbContext _context;
 
-        public IQueryable<T> GetAll()
+        public virtual IQueryable<T> GetAll()
         {
             return _context.Set<T>().AsQueryable();
         }
-        public async Task<IQueryable<T>> GetAllAsync()
+        public virtual async Task<IQueryable<T>> GetAllAsync()
         {
             return await Task.FromResult(_context.Set<T>().AsQueryable());
         }
 
-        public void Add(T entity)
+        public virtual void Add(T entity)
         {
             _context.Set<T>().Add(entity);
         }
-        public async Task AddAsync(T entity)
+        public virtual async Task AddAsync(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
         }
 
-        public T? GetById(int id)
+        public virtual T? GetById(int id)
         {
             return _context.Set<T>().Find(id);
         }
-        public async Task<T?> GetByIdAsync(int id)
+        public virtual async Task<T?> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
 
         }
 
-        public void Update(T entity)
+        public virtual void Update(T entity)
         {
             _context.Set<T>().Update(entity);
         }
-        public async Task UpdateAsync(T entity)
+        public virtual async Task UpdateAsync(T entity)
         {
             await Task.FromResult(_context.Set<T>().Update(entity));
         }
 
-        public void Delete(T entity)
+        public virtual void Delete(T entity)
         {
             _context.Set<T>().Remove(entity);
         }
-        public async Task DeleteAsync(T entity)
+        public virtual async Task DeleteAsync(T entity)
         {
             await Task.FromResult(_context.Set<T>().Update(entity));
         }
