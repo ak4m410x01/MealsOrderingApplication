@@ -18,6 +18,7 @@ namespace MealsOrderingApplication.Data.DbContext
         public DbSet<Meal> Meals { get; set; }
         public DbSet<Drink> Drinks { get; set; }
         public DbSet<Customer> Customers { get; set; }
+        public DbSet<Admin> Admins { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<ProductOrderDetails> ProductOrderDetails { get; set; }

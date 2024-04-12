@@ -12,10 +12,10 @@ namespace MealsOrderingApplication.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.EnsureSchema(
-                name: "Product");
+                name: "User");
 
             migrationBuilder.EnsureSchema(
-                name: "User");
+                name: "Product");
 
             migrationBuilder.EnsureSchema(
                 name: "Security");
@@ -33,26 +33,6 @@ namespace MealsOrderingApplication.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Categories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Customers",
-                schema: "User",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Username = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
-                    Password = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Customers", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -123,29 +103,6 @@ namespace MealsOrderingApplication.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Orders",
-                schema: "Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CustomerId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Orders", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Orders_Customers_CustomerId",
-                        column: x => x.CustomerId,
-                        principalSchema: "User",
-                        principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "RoleClaims",
                 schema: "Security",
                 columns: table => new
@@ -164,6 +121,45 @@ namespace MealsOrderingApplication.Data.Migrations
                         column: x => x.RoleId,
                         principalSchema: "Security",
                         principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Admins",
+                schema: "User",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Admins", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Admins_Users_Id",
+                        column: x => x.Id,
+                        principalSchema: "Security",
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Customers",
+                schema: "User",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Customers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Customers_Users_Id",
+                        column: x => x.Id,
+                        principalSchema: "Security",
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -258,6 +254,29 @@ namespace MealsOrderingApplication.Data.Migrations
                         column: x => x.UserId,
                         principalSchema: "Security",
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Orders",
+                schema: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Orders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Orders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "User",
+                        principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -434,6 +453,10 @@ namespace MealsOrderingApplication.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Admins",
+                schema: "User");
+
+            migrationBuilder.DropTable(
                 name: "Drinks",
                 schema: "Product");
 
@@ -478,10 +501,6 @@ namespace MealsOrderingApplication.Data.Migrations
                 schema: "Security");
 
             migrationBuilder.DropTable(
-                name: "Users",
-                schema: "Security");
-
-            migrationBuilder.DropTable(
                 name: "Orders",
                 schema: "Product");
 
@@ -492,6 +511,10 @@ namespace MealsOrderingApplication.Data.Migrations
             migrationBuilder.DropTable(
                 name: "Customers",
                 schema: "User");
+
+            migrationBuilder.DropTable(
+                name: "Users",
+                schema: "Security");
         }
     }
 }

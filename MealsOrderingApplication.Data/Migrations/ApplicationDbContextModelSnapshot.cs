@@ -44,52 +44,6 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.ToTable("Categories", "Product");
                 });
 
-            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Address")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("FirstName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("nvarchar(512)");
-
-                    b.Property<string>("Phone")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers", "User");
-                });
-
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -101,8 +55,9 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Description")
                         .HasMaxLength(255)
@@ -265,6 +220,8 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("Users", "Security");
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -414,6 +371,25 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.ToTable("Meals", "Product");
                 });
 
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Admin", b =>
+                {
+                    b.HasBaseType("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser");
+
+                    b.ToTable("Admins", "User");
+                });
+
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Customer", b =>
+                {
+                    b.HasBaseType("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser");
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.ToTable("Customers", "User");
+                });
+
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Order", b =>
                 {
                     b.HasOne("MealsOrderingApplication.Domain.Entities.Customer", "Customer")
@@ -535,20 +511,38 @@ namespace MealsOrderingApplication.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Category", b =>
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Admin", b =>
                 {
-                    b.Navigation("Products");
+                    b.HasOne("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("MealsOrderingApplication.Domain.Entities.Admin", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Customer", b =>
                 {
-                    b.Navigation("Orders");
+                    b.HasOne("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("MealsOrderingApplication.Domain.Entities.Customer", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Order", b =>
                 {
                     b.Navigation("OrderDetails")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Customer", b =>
+                {
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

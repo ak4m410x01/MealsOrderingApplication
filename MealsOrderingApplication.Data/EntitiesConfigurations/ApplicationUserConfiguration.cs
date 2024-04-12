@@ -10,6 +10,10 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
         {
             // Config Table Name
             builder.ToTable("Users", "Security");
+
+
+            // Config Inheritance as TPC
+            builder.UseTptMappingStrategy();
         }
     }
 }
