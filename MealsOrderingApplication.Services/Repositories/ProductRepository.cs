@@ -4,9 +4,9 @@ using MealsOrderingApplication.Domain.Interfaces;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        public CategoryRepository(ApplicationDbContext context) : base(context)
+        public ProductRepository(ApplicationDbContext context) : base(context)
         {
         }
     }

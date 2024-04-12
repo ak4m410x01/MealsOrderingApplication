@@ -9,9 +9,9 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CategoryController : ControllerBase
+    public class CategoriesController : ControllerBase
     {
-        public CategoryController(IUnitOfWork unitOfWork)
+        public CategoriesController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
@@ -22,7 +22,13 @@ namespace MealsOrderingApplication.API.Controllers
         public async Task<IActionResult> GetAllAsync()
         {
             IQueryable<Category> categories = await _unitOfWork.Categories.GetAllAsync();
-            return Ok(categories);
+
+            return Ok(categories.Select(c => new CategoryDTODetails()
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description
+            }));
         }
 
         [HttpPost]
@@ -35,7 +41,13 @@ namespace MealsOrderingApplication.API.Controllers
             };
             await _unitOfWork.Categories.AddAsync(category);
             await _unitOfWork.CompleteAsync();
-            return Ok(category);
+
+            return Ok(new CategoryDTODetails()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            });
         }
 
         [HttpGet("{id}")]
@@ -43,8 +55,14 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Category? category = await _unitOfWork.Categories.GetByIdAsync(id);
             if (category is null)
-                return BadRequest(new { error = "No Categories found with this Id" });
-            return Ok(category);
+                return NotFound(new { error = "No Categories found with this Id" });
+
+            return Ok(new CategoryDTODetails()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            });
         }
 
         [HttpPut("{id}")]
@@ -52,7 +70,7 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Category? category = await _unitOfWork.Categories.GetByIdAsync(id);
             if (category is null)
-                return BadRequest(new { error = "No Categories found with this Id" });
+                return NotFound(new { error = "No Categories found with this Id" });
 
             if (model.Name is not null)
                 category.Name = model.Name;
@@ -61,7 +79,12 @@ namespace MealsOrderingApplication.API.Controllers
                 category.Description = model.Description;
 
             await _unitOfWork.CompleteAsync();
-            return Ok(category);
+            return Ok(new CategoryDTODetails()
+            {
+                Id = category.Id,
+                Name = category.Name,
+                Description = category.Description
+            });
         }
 
         [HttpDelete("{id}")]
@@ -69,12 +92,11 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Category? category = await _unitOfWork.Categories.GetByIdAsync(id);
             if (category is null)
-                return BadRequest(new { error = "No Categories found with this Id" });
+                return NotFound(new { error = "No Categories found with this Id" });
 
             await _unitOfWork.Categories.DeleteAsync(category);
             await _unitOfWork.CompleteAsync();
             return NoContent();
         }
-
     }
 }

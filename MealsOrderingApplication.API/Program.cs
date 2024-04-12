@@ -27,8 +27,9 @@ namespace MealsOrderingApplication.API
 
             // Add Repository Services
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-            builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IMealRepository, MealRepository>();
+            builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
 
             // Add Identity Config
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

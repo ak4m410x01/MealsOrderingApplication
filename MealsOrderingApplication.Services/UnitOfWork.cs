@@ -6,15 +6,25 @@ namespace MealsOrderingApplication.Services
 {
     public class UnitOfWork : IUnitOfWork
     {
-        public UnitOfWork(ApplicationDbContext context, ICategoryRepository categories)
+        public UnitOfWork(
+            ApplicationDbContext context,
+            ICategoryRepository categories,
+            IMealRepository meals, IDrinkRepository drinks,
+            IProductRepository products)
         {
             _context = context;
             Categories = categories;
+            Meals = meals;
+            Drinks = drinks;
+            Products = products;
         }
 
         private readonly ApplicationDbContext _context;
 
         public ICategoryRepository Categories { get; private set; }
+        public IProductRepository Products { get; private set; }
+        public IMealRepository Meals { get; private set; }
+        public IDrinkRepository Drinks { get; private set; }
 
         public int Complete()
         {
