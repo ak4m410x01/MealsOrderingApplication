@@ -1,6 +1,8 @@
 
 using MealsOrderingApplication.Data.DbContext;
+using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,9 @@ namespace MealsOrderingApplication.API
             // Add DbContext Configurations
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // Add Unit Of Work Repository
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Add Identity Config
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
