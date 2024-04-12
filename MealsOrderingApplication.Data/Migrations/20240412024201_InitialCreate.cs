@@ -15,7 +15,13 @@ namespace MealsOrderingApplication.Data.Migrations
                 name: "Products");
 
             migrationBuilder.EnsureSchema(
+                name: "Product");
+
+            migrationBuilder.EnsureSchema(
                 name: "Security");
+
+            migrationBuilder.CreateSequence(
+                name: "ProductSequence");
 
             migrationBuilder.CreateTable(
                 name: "Categories",
@@ -76,12 +82,34 @@ namespace MealsOrderingApplication.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Meals",
-                schema: "Products",
+                name: "Drinks",
+                schema: "Product",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false, defaultValueSql: "NEXT VALUE FOR [ProductSequence]"),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: true),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Drinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Drinks_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalSchema: "Products",
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Meals",
+                schema: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false, defaultValueSql: "NEXT VALUE FOR [ProductSequence]"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: true),
                     Price = table.Column<double>(type: "float", nullable: false),
@@ -92,6 +120,28 @@ namespace MealsOrderingApplication.Data.Migrations
                     table.PrimaryKey("PK_Meals", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Meals_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalSchema: "Products",
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false, defaultValueSql: "NEXT VALUE FOR [ProductSequence]"),
+                    Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", maxLength: 5000, nullable: true),
+                    Price = table.Column<double>(type: "float", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Product_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalSchema: "Products",
                         principalTable: "Categories",
@@ -217,9 +267,20 @@ namespace MealsOrderingApplication.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Drinks_CategoryId",
+                schema: "Product",
+                table: "Drinks",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Meals_CategoryId",
-                schema: "Products",
+                schema: "Product",
                 table: "Meals",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Product_CategoryId",
+                table: "Product",
                 column: "CategoryId");
 
             migrationBuilder.CreateIndex(
@@ -273,8 +334,15 @@ namespace MealsOrderingApplication.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Drinks",
+                schema: "Product");
+
+            migrationBuilder.DropTable(
                 name: "Meals",
-                schema: "Products");
+                schema: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Product");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims",
@@ -307,6 +375,9 @@ namespace MealsOrderingApplication.Data.Migrations
             migrationBuilder.DropTable(
                 name: "Users",
                 schema: "Security");
+
+            migrationBuilder.DropSequence(
+                name: "ProductSequence");
         }
     }
 }

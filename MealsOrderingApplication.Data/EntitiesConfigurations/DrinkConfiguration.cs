@@ -4,12 +4,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MealsOrderingApplication.Data.EntitiesConfigurations
 {
-    public class MealConfiguration : IEntityTypeConfiguration<Meal>
+    public class DrinkConfiguration : IEntityTypeConfiguration<Drink>
     {
-        public void Configure(EntityTypeBuilder<Meal> builder)
+        public void Configure(EntityTypeBuilder<Drink> builder)
         {
             // Config Table Name
-            builder.ToTable("Meals", "Product");
+            builder.ToTable("Drinks", "Product");
         }
     }
+
 }

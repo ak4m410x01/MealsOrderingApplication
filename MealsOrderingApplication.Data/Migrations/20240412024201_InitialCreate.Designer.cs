@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealsOrderingApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240411140402_InitialCreate")]
+    [Migration("20240412024201_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -24,6 +24,8 @@ namespace MealsOrderingApplication.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.HasSequence("ProductSequence");
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Category", b =>
                 {
@@ -47,13 +49,14 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.ToTable("Categories", "Products");
                 });
 
-            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Meal", b =>
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasDefaultValueSql("NEXT VALUE FOR [ProductSequence]");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseSequence(b.Property<int>("Id"));
 
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
@@ -74,7 +77,9 @@ namespace MealsOrderingApplication.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Meals", "Products");
+                    b.ToTable("Product");
+
+                    b.UseTpcMappingStrategy();
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser", b =>
@@ -281,10 +286,24 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.ToTable("UserTokens", "Security");
                 });
 
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Drink", b =>
+                {
+                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Product");
+
+                    b.ToTable("Drinks", "Product");
+                });
+
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Meal", b =>
                 {
+                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Product");
+
+                    b.ToTable("Meals", "Product");
+                });
+
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
+                {
                     b.HasOne("MealsOrderingApplication.Domain.Entities.Category", "Category")
-                        .WithMany("Meals")
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -345,7 +364,7 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Category", b =>
                 {
-                    b.Navigation("Meals");
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
-﻿using MealsOrderingApplication.Domain.IdentityEntities;
+﻿using MealsOrderingApplication.Domain.Entities;
+using MealsOrderingApplication.Domain.IdentityEntities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,12 @@ namespace MealsOrderingApplication.Data.DbContext
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
+        // Add Db Sets
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<Meal> Meals { get; set; }
+        public DbSet<Drink> Drinks { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
