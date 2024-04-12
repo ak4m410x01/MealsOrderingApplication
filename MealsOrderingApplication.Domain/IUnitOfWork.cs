@@ -7,6 +7,8 @@ namespace MealsOrderingApplication.Domain
         public ICategoryRepository Categories { get; }
         public IMealRepository Meals { get; }
         public IDrinkRepository Drinks { get; }
+        public ICustomerRepository Customers { get; }
+        public IAdminRepository Admins { get; }
 
         public int Complete();
         public Task<int> CompleteAsync();

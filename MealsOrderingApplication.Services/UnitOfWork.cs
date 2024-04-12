@@ -10,13 +10,16 @@ namespace MealsOrderingApplication.Services
             ApplicationDbContext context,
             ICategoryRepository categories,
             IMealRepository meals, IDrinkRepository drinks,
-            IProductRepository products)
+            IProductRepository products,
+            ICustomerRepository customers, IAdminRepository admins)
         {
             _context = context;
             Categories = categories;
             Meals = meals;
             Drinks = drinks;
             Products = products;
+            Customers = customers;
+            Admins = admins;
         }
 
         private readonly ApplicationDbContext _context;
@@ -25,6 +28,8 @@ namespace MealsOrderingApplication.Services
         public IProductRepository Products { get; private set; }
         public IMealRepository Meals { get; private set; }
         public IDrinkRepository Drinks { get; private set; }
+        public ICustomerRepository Customers { get; private set; }
+        public IAdminRepository Admins { get; private set; }
 
         public int Complete()
         {

@@ -1,30 +1,68 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
+using MealsOrderingApplication.Domain.DTOs.Customer;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Models;
+using MealsOrderingApplication.Services.IServices;
 using Microsoft.AspNetCore.Identity;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
     public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
     {
-        public CustomerRepository(ApplicationDbContext context, UserManager<Customer> userManager) : base(context)
+        public CustomerRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthenticationService authService) : base(context)
         {
             _userManager = userManager;
+            _authService = authService;
         }
 
-        private readonly UserManager<Customer> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAuthenticationService _authService;
 
-        public override void Add(Customer entity)
+        public async Task<AuthanticationModel> AddAsync(AddCustomerDTO model)
         {
-            base.Add(entity);
-            _userManager.AddToRoleAsync(entity, "User");
+            if ((await _userManager.FindByEmailAsync(model.Email)) is not null)
+                return new AuthanticationModel() { Message = "Email is Already Exists!" };
+
+            if ((await _userManager.FindByNameAsync(model.Username)) is not null)
+                return new AuthanticationModel() { Message = "Username is Already Exists!" };
+
+            Admin admin = new Admin()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                UserName = model.Username,
+                PhoneNumber = model.Phone
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(admin, model.Password);
+            if (!result.Succeeded)
+            {
+                AuthanticationModel authModel = new AuthanticationModel();
+                foreach (var error in result.Errors)
+                {
+                    authModel.Message += error;
+                }
+                return authModel;
+            }
+
+            await _userManager.AddToRolesAsync(admin, roles: new[] { "User", "Admin" });
+
+            JwtSecurityToken jwtSecurityToken = await _authService.CreateJwtTokenAsync(admin);
+
+            return await Task.FromResult(new AuthanticationModel()
+            {
+                IsAuthenticated = true,
+                UserId = admin.Id,
+                Email = admin.Email,
+                UserName = admin.UserName,
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+            });
         }
-        public override async Task AddAsync(Customer entity)
-        {
-            await base.AddAsync(entity);
-            await _userManager.AddToRoleAsync(entity, "User");
-        }
+
 
         public override void Delete(Customer entity)
         {

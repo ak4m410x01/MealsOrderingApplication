@@ -11,6 +11,9 @@
         public T? GetById(int id);
         public Task<T?> GetByIdAsync(int id);
 
+        public T? GetById(string id);
+        public Task<T?> GetByIdAsync(string id);
+
         public void Update(T entity);
         public Task UpdateAsync(T entity);
 

@@ -54,7 +54,7 @@ namespace MealsOrderingApplication.Services.Services
 
             await _userManager.AddToRoleAsync(customer, "User");
 
-            JwtSecurityToken jwtSecurityToken = await CreateJwtToken(customer);
+            JwtSecurityToken jwtSecurityToken = await CreateJwtTokenAsync(customer);
 
             return await Task.FromResult(new AuthanticationModel()
             {
@@ -71,7 +71,7 @@ namespace MealsOrderingApplication.Services.Services
             if (user is null || !(await _userManager.CheckPasswordAsync(user, model.Password)))
                 return new AuthanticationModel() { Message = "Username or Passwrod is Incorrect!" };
 
-            JwtSecurityToken jwtSecurityToken = await CreateJwtToken(user);
+            JwtSecurityToken jwtSecurityToken = await CreateJwtTokenAsync(user);
 
             return await Task.FromResult(new AuthanticationModel()
             {
@@ -83,7 +83,7 @@ namespace MealsOrderingApplication.Services.Services
             });
         }
 
-        private async Task<JwtSecurityToken> CreateJwtToken(ApplicationUser user)
+        public async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
         {
             IList<Claim> userClaims = await _userManager.GetClaimsAsync(user);
             IList<string> userRoles = await _userManager.GetRolesAsync(user);

@@ -40,6 +40,16 @@ namespace MealsOrderingApplication.Services.Repositories
 
         }
 
+        public virtual T? GetById(string id)
+        {
+            return _context.Set<T>().Find(id);
+        }
+        public virtual async Task<T?> GetByIdAsync(string id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+
+        }
+
         public virtual void Update(T entity)
         {
             _context.Set<T>().Update(entity);

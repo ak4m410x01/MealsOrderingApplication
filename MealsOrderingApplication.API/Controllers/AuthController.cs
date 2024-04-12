@@ -1,4 +1,5 @@
-﻿using MealsOrderingApplication.Domain.DTOs.AuthanticationDTO;
+﻿using MealsOrderingApplication.Domain;
+using MealsOrderingApplication.Domain.DTOs.AuthanticationDTO;
 using MealsOrderingApplication.Domain.Models;
 using MealsOrderingApplication.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -10,11 +11,13 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        public AuthController(IAuthenticationService authService)
+        public AuthController(IAuthenticationService authService, IUnitOfWork unitOfWork)
         {
             _authService = authService;
+            _unitOfWork = unitOfWork;
         }
 
+        public readonly IUnitOfWork _unitOfWork;
         public readonly IAuthenticationService _authService;
 
         [HttpPost("register")]
@@ -26,6 +29,8 @@ namespace MealsOrderingApplication.API.Controllers
             AuthanticationModel authModel = await _authService.RegisterAsync(model);
             if (!authModel.IsAuthenticated)
                 return BadRequest(authModel.Message);
+
+            await _unitOfWork.CompleteAsync();
 
             return Ok(new
             {
