@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealsOrderingApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240412062103_InitialCreate")]
+    [Migration("20240412065219_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -71,8 +71,6 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("Orders", "Product");
-
-                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.OrderDetails", b =>
@@ -362,14 +360,14 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Drink", b =>
                 {
-                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Order");
+                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Product");
 
                     b.ToTable("Drinks", "Product");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Meal", b =>
                 {
-                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Order");
+                    b.HasBaseType("MealsOrderingApplication.Domain.Entities.Product");
 
                     b.ToTable("Meals", "Product");
                 });
@@ -498,7 +496,7 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Drink", b =>
                 {
-                    b.HasOne("MealsOrderingApplication.Domain.Entities.Order", null)
+                    b.HasOne("MealsOrderingApplication.Domain.Entities.Product", null)
                         .WithOne()
                         .HasForeignKey("MealsOrderingApplication.Domain.Entities.Drink", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,7 +505,7 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Meal", b =>
                 {
-                    b.HasOne("MealsOrderingApplication.Domain.Entities.Order", null)
+                    b.HasOne("MealsOrderingApplication.Domain.Entities.Product", null)
                         .WithOne()
                         .HasForeignKey("MealsOrderingApplication.Domain.Entities.Meal", "Id")
                         .OnDelete(DeleteBehavior.Cascade)

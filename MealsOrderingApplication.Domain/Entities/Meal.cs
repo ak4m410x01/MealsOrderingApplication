@@ -1,6 +1,6 @@
 ﻿namespace MealsOrderingApplication.Domain.Entities
 {
-    public class Meal : Order
+    public class Meal : Product
     {
     }
 }

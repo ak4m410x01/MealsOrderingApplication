@@ -259,6 +259,44 @@ namespace MealsOrderingApplication.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Drinks",
+                schema: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Drinks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Drinks_Products_Id",
+                        column: x => x.Id,
+                        principalSchema: "Product",
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Meals",
+                schema: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Meals", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Meals_Products_Id",
+                        column: x => x.Id,
+                        principalSchema: "Product",
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Orders",
                 schema: "Product",
                 columns: table => new
@@ -277,44 +315,6 @@ namespace MealsOrderingApplication.Data.Migrations
                         column: x => x.CustomerId,
                         principalSchema: "User",
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Drinks",
-                schema: "Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Drinks", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Drinks_Orders_Id",
-                        column: x => x.Id,
-                        principalSchema: "Product",
-                        principalTable: "Orders",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Meals",
-                schema: "Product",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Meals", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Meals_Orders_Id",
-                        column: x => x.Id,
-                        principalSchema: "Product",
-                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
