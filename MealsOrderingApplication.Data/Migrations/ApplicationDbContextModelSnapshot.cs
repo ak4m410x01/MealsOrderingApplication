@@ -43,7 +43,7 @@ namespace MealsOrderingApplication.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", "Products");
+                    b.ToTable("Categories", "Product");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
@@ -74,7 +74,10 @@ namespace MealsOrderingApplication.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Product");
+                    b.ToTable("Product", null, t =>
+                        {
+                            t.ExcludeFromMigrations();
+                        });
 
                     b.UseTpcMappingStrategy();
                 });

@@ -8,6 +8,9 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
+            // Ignore This Table From Migrations
+            builder.ToTable(nameof(Product), p => p.ExcludeFromMigrations(true));
+
             // Config Primary Key
             builder.HasKey(p => p.Id);
 
