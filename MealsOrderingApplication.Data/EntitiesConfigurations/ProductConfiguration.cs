@@ -9,16 +9,12 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
         public void Configure(EntityTypeBuilder<Product> builder)
         {
             // Ignore This Table From Migrations
-            builder.ToTable(nameof(Product), p => p.ExcludeFromMigrations(true));
+            builder.ToTable("Products", "Product");
 
             // Config Primary Key
             builder.HasKey(p => p.Id);
 
             // Config Properties Constraints
-            builder.Property(p => p.Name)
-                   .HasMaxLength(255)
-                   .IsRequired();
-
             builder.Property(p => p.Description)
                    .HasMaxLength(5_000)
                    .IsRequired(false);
@@ -30,7 +26,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
                    .IsRequired();
 
             // Config Inheritance as TPC
-            builder.UseTpcMappingStrategy();
+            builder.UseTptMappingStrategy();
         }
     }
 
