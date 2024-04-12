@@ -39,6 +39,5 @@ namespace MealsOrderingApplication.Services
         {
             _context.Dispose();
         }
-
     }
 }

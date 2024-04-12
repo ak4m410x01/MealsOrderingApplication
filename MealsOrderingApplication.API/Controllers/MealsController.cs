@@ -123,7 +123,7 @@ namespace MealsOrderingApplication.API.Controllers
                 return NotFound(new { error = "No Meals found with this Id" });
 
             await _unitOfWork.Meals.DeleteAsync(meal);
-            int x = await _unitOfWork.CompleteAsync();
+            await _unitOfWork.CompleteAsync();
 
             return NoContent();
         }
