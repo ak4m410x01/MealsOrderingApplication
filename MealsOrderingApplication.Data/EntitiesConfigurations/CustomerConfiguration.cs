@@ -12,7 +12,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
             builder.ToTable("Customers", "User");
 
             // Config Properties Constraints
-            builder.Property(o => o.Address)
+            builder.Property(o => o.Location)
                    .HasMaxLength(512)
                    .IsRequired();
         }

@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace MealsOrderingApplication.Data.Migrations
 {
     /// <inheritdoc />
@@ -150,7 +152,7 @@ namespace MealsOrderingApplication.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
+                    Location = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -369,6 +371,16 @@ namespace MealsOrderingApplication.Data.Migrations
                         principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                schema: "Security",
+                table: "Roles",
+                columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
+                values: new object[,]
+                {
+                    { "4d0befef-da17-4458-b519-235410025892", "8caeef4c-9683-48be-a72b-d427e682c922", "Admin", "ADMIN" },
+                    { "982927be-fde5-4057-b3a3-995e53588279", "78be82a0-23d0-4e38-bf71-91cb993668c3", "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(

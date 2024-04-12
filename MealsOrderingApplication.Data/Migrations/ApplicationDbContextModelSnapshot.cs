@@ -247,6 +247,22 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("Roles", "Security");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "982927be-fde5-4057-b3a3-995e53588279",
+                            ConcurrencyStamp = "78be82a0-23d0-4e38-bf71-91cb993668c3",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "4d0befef-da17-4458-b519-235410025892",
+                            ConcurrencyStamp = "8caeef4c-9683-48be-a72b-d427e682c922",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -380,7 +396,7 @@ namespace MealsOrderingApplication.Data.Migrations
                 {
                     b.HasBaseType("MealsOrderingApplication.Domain.IdentityEntities.ApplicationUser");
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Location")
                         .IsRequired()
                         .HasMaxLength(512)
                         .HasColumnType("nvarchar(512)");

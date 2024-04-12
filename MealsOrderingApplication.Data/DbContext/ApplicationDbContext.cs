@@ -31,7 +31,6 @@ namespace MealsOrderingApplication.Data.DbContext
 
 
             // Config Identity Tables Names
-            builder.Entity<IdentityRole>().ToTable("Roles", "Security");
             builder.Entity<IdentityUserRole<string>>().ToTable("UserRoles", "Security");
             builder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins", "Security");
             builder.Entity<IdentityUserToken<string>>().ToTable("UserTokens", "Security");
