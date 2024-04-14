@@ -1,6 +1,5 @@
 ﻿using MealsOrderingApplication.Domain;
-using MealsOrderingApplication.Domain.DTOs.Admin;
-using MealsOrderingApplication.Domain.DTOs.Customer;
+using MealsOrderingApplication.Domain.DTOs.CustomerDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Models;
@@ -32,9 +31,9 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = c.Id,
                 FirstName = c.FirstName,
                 LastName = c.LastName,
-                Email = c.Email,
-                Username = c.UserName,
-                Phone = c.PhoneNumber,
+                Email = c.Email ?? "",
+                Username = c.UserName ?? "",
+                PhoneNumber = c.PhoneNumber ?? "",
                 Location = c.Location
             }));
         }
@@ -45,7 +44,7 @@ namespace MealsOrderingApplication.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            AuthanticationModel authModel = await _unitOfWork.Customers.AddAsync(model);
+            AuthanticationModel authModel = await _unitOfWork.Customers.CreateAsync(model);
             if (!authModel.IsAuthenticated)
                 return BadRequest(authModel.Message);
 
@@ -56,7 +55,6 @@ namespace MealsOrderingApplication.API.Controllers
                 UserId = authModel.UserId,
                 Email = authModel.Email,
                 Username = authModel.UserName,
-                Token = authModel.AccessToken,
             });
         }
 
@@ -72,15 +70,15 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = customer.Id,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                Email = customer.Email,
-                Username = customer.UserName,
-                Phone = customer.PhoneNumber,
+                Email = customer.Email ?? "",
+                Username = customer.UserName ?? "",
+                PhoneNumber = customer.PhoneNumber ?? "",
                 Location = customer.Location
             });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(string id, UpdateCustomerDTO model)
+        public async Task<IActionResult> UpdateAsync(string id, UpdateCustomerDTO dto)
         {
             Customer? customer = await _unitOfWork.Customers.GetByIdAsync(id);
             if (customer is null)
@@ -89,28 +87,7 @@ namespace MealsOrderingApplication.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (model.FirstName is not null)
-                customer.FirstName = model.FirstName;
-
-            if (model.LastName is not null)
-                customer.LastName = model.LastName;
-
-            if (model.Email is not null)
-                customer.Email = model.Email;
-
-            if (model.Username is not null)
-                customer.UserName = model.Username;
-
-            if (model.Password is not null)
-                customer.PasswordHash = _userManager.PasswordHasher.HashPassword(customer, model.Password);
-
-            if (model.Phone is not null)
-                customer.PhoneNumber = model.Phone;
-
-            if (model.Location is not null)
-                customer.Location = model.Location;
-
-            await _unitOfWork.Customers.UpdateAsync(customer);
+            await _unitOfWork.Customers.UpdateAsync(customer, dto);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new CustomerDTODetails()
@@ -120,7 +97,7 @@ namespace MealsOrderingApplication.API.Controllers
                 LastName = customer.LastName,
                 Email = customer.Email,
                 Username = customer.UserName,
-                Phone = customer.PhoneNumber,
+                PhoneNumber = customer.PhoneNumber,
                 Location = customer.Location,
             });
         }

@@ -1,11 +1,8 @@
-﻿using MealsOrderingApplication.Domain.DTOs.Customer;
-using MealsOrderingApplication.Domain.Entities;
-using MealsOrderingApplication.Domain.Models;
+﻿using MealsOrderingApplication.Domain.Entities;
 
 namespace MealsOrderingApplication.Domain.Interfaces
 {
-    public interface ICustomerRepository : IBaseRepository<Customer>
+    public interface ICustomerRepository : IApplicationUserRepository<Customer>
     {
-        public Task<AuthanticationModel> AddAsync(AddCustomerDTO model);
     }
 }

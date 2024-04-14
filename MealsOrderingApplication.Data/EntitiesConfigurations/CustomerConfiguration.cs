@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Customer> builder)
         {
-            // Ignore This Table From Migrations
+            // Config Table Name for Customer Entity
             builder.ToTable("Customers", "User");
 
             // Config Properties Constraints

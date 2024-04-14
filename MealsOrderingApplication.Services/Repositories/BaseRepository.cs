@@ -1,71 +1,65 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using MealsOrderingApplication.Domain.Interfaces.Mapping;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class BaseRepository<T> : IBaseRepository<T> where T : class
+    public abstract class BaseRepository<TEntity> : IBaseRepository<TEntity>, IDtoToEntity<TEntity> where TEntity : class
     {
         public BaseRepository(ApplicationDbContext context)
         {
             _context = context;
         }
+        private readonly ApplicationDbContext _context;
 
-        public readonly ApplicationDbContext _context;
 
-        public virtual IQueryable<T> GetAll()
+        // Retrieve all Entities from Repository
+        public virtual async Task<IQueryable<TEntity>> GetAllAsync()
         {
-            return _context.Set<T>().AsQueryable();
-        }
-        public virtual async Task<IQueryable<T>> GetAllAsync()
-        {
-            return await Task.FromResult(_context.Set<T>().AsQueryable());
+            return await Task.FromResult(_context.Set<TEntity>().AsQueryable());
         }
 
-        public virtual void Add(T entity)
+
+        // Retrive Entity from Repository By Id
+        public virtual async Task<TEntity?> GetByIdAsync(object id)
         {
-            _context.Set<T>().Add(entity);
-        }
-        public virtual async Task AddAsync(T entity)
-        {
-            await _context.Set<T>().AddAsync(entity);
+            return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public virtual T? GetById(int id)
-        {
-            return _context.Set<T>().Find(id);
-        }
-        public virtual async Task<T?> GetByIdAsync(int id)
-        {
-            return await _context.Set<T>().FindAsync(id);
 
-        }
-
-        public virtual T? GetById(string id)
+        // Add Entity to Repository
+        public virtual async Task<TEntity> AddAsync<TDto>(TDto dto) where TDto : IAddDTO
         {
-            return _context.Set<T>().Find(id);
-        }
-        public virtual async Task<T?> GetByIdAsync(string id)
-        {
-            return await _context.Set<T>().FindAsync(id);
+            TEntity entity = await MapAddDtoToEntity<TDto>(dto);
 
+            await _context.Set<TEntity>().AddAsync(entity);
+            return entity;
         }
 
-        public virtual void Update(T entity)
+
+        // Update Entity in Repository
+        public virtual async Task<TEntity> UpdateAsync<TDto>(TEntity entity, TDto dto) where TDto : IUpdateDTO
         {
-            _context.Set<T>().Update(entity);
-        }
-        public virtual async Task UpdateAsync(T entity)
-        {
-            await Task.FromResult(_context.Set<T>().Update(entity));
+            entity = await MapUpdateDtoToEntity<TDto>(entity, dto);
+
+            await Task.FromResult(_context.Set<TEntity>().Update(entity));
+            return await Task.FromResult(entity);
         }
 
-        public virtual void Delete(T entity)
+        // Delete Entity from Repository
+        public virtual async Task DeleteAsync(TEntity entity)
         {
-            _context.Set<T>().Remove(entity);
+            await Task.FromResult(_context.Set<TEntity>().Remove(entity));
         }
-        public virtual async Task DeleteAsync(T entity)
-        {
-            await Task.FromResult(_context.Set<T>().Update(entity));
-        }
+
+
+
+        // Map Add Dto To Entity
+        public abstract Task<TEntity> MapAddDtoToEntity<TDto>(TDto dto) where TDto : IAddDTO;
+
+        // Map Update Dto To Entity
+        public abstract Task<TEntity> MapUpdateDtoToEntity<TDto>(TEntity entity, TDto dto) where TDto : IUpdateDTO;
+
     }
 }

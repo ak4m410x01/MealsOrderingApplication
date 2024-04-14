@@ -1,6 +1,8 @@
-﻿namespace MealsOrderingApplication.Domain.DTOs.MealDTO
+﻿using MealsOrderingApplication.Domain.Interfaces.DTOs;
+
+namespace MealsOrderingApplication.Domain.DTOs.MealDTO
 {
-    public class AddMealDTO : BaseMealDTO
+    public class AddMealDTO : BaseMealDTO, IAddDTO
     {
     }
 }

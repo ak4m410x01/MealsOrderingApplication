@@ -40,6 +40,8 @@ namespace MealsOrderingApplication.API
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<JWTToken, JWTToken>();
+
 
             // Add Identity Config
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
@@ -47,8 +49,8 @@ namespace MealsOrderingApplication.API
                             .AddDefaultTokenProviders();
 
             // Add JWT Config
-            builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-            builder.Services.AddSingleton<JWT>();
+            builder.Services.Configure<JWTConfig>(builder.Configuration.GetSection("JWT"));
+            builder.Services.AddSingleton<JWTConfig>();
 
             // Add Authentication
             builder.Services.AddAuthentication(options =>

@@ -2,26 +2,22 @@
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Models;
-using MealsOrderingApplication.Services.Helpers;
 using MealsOrderingApplication.Services.IServices;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace MealsOrderingApplication.Services.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService(UserManager<ApplicationUser> userManager, JWT jwt)
+        public AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt)
         {
             _userManager = userManager;
             _jwt = jwt;
         }
 
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly JWT _jwt;
+        private readonly JWTToken _jwt;
 
         public async Task<AuthanticationModel> RegisterAsync(RegisterDTO model)
         {
@@ -31,7 +27,7 @@ namespace MealsOrderingApplication.Services.Services
             if ((await _userManager.FindByNameAsync(model.Username)) is not null)
                 return new AuthanticationModel() { Message = "Username is Already Exists!" };
 
-            Customer customer = new Customer()
+            Customer user = new Customer()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -41,7 +37,7 @@ namespace MealsOrderingApplication.Services.Services
                 Location = model.Location,
             };
 
-            IdentityResult result = await _userManager.CreateAsync(customer, model.Password);
+            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
                 AuthanticationModel authModel = new AuthanticationModel();
@@ -52,26 +48,9 @@ namespace MealsOrderingApplication.Services.Services
                 return authModel;
             }
 
-            await _userManager.AddToRoleAsync(customer, "User");
+            await _userManager.AddToRoleAsync(user, "User");
 
-            JwtSecurityToken jwtSecurityToken = await CreateJwtTokenAsync(customer);
-
-            return await Task.FromResult(new AuthanticationModel()
-            {
-                IsAuthenticated = true,
-                UserId = customer.Id,
-                Email = customer.Email,
-                UserName = customer.UserName,
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
-            });
-        }
-        public async Task<AuthanticationModel> LoginAsync(LoginDTO model)
-        {
-            ApplicationUser? user = await _userManager.FindByEmailAsync(model.Email);
-            if (user is null || !(await _userManager.CheckPasswordAsync(user, model.Password)))
-                return new AuthanticationModel() { Message = "Username or Passwrod is Incorrect!" };
-
-            JwtSecurityToken jwtSecurityToken = await CreateJwtTokenAsync(user);
+            JwtSecurityToken jwtSecurityToken = await _jwt.GenerateAccessTokenAsync(user);
 
             return await Task.FromResult(new AuthanticationModel()
             {
@@ -82,35 +61,22 @@ namespace MealsOrderingApplication.Services.Services
                 AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
             });
         }
-
-        public async Task<JwtSecurityToken> CreateJwtTokenAsync(ApplicationUser user)
+        public async Task<AuthanticationModel> LoginAsync(LoginDTO model)
         {
-            IList<Claim> userClaims = await _userManager.GetClaimsAsync(user);
-            IList<string> userRoles = await _userManager.GetRolesAsync(user);
-            List<Claim> roleClaims = new List<Claim>();
+            ApplicationUser? user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null || !(await _userManager.CheckPasswordAsync(user, model.Password)))
+                return new AuthanticationModel() { Message = "Username or Passwrod is Incorrect!" };
 
-            foreach (string role in userRoles)
-                roleClaims.Append(new Claim("roles", role));
+            JwtSecurityToken jwtSecurityToken = await _jwt.GenerateAccessTokenAsync(user);
 
-            var claims = new[]
+            return await Task.FromResult(new AuthanticationModel()
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("uid", user.Id),
-                new Claim("Email", user.Email),
-            }.Union(userClaims)
-            .Union(roleClaims);
-
-            // TODO: Fix Null Reference Exception Here
-            string key = _jwt.Key is null ? "sz8eI7OdHBrjrIo8j9nTW/rQyO1OvY0pAQ2wDKQZw/0=" : _jwt.Key;
-            SigningCredentials signingCredentials = new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
-
-            return new JwtSecurityToken(
-                issuer: _jwt.Issuer,
-                audience: _jwt.Audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddDays(_jwt.DurationInDays),
-                signingCredentials: signingCredentials);
+                IsAuthenticated = true,
+                UserId = user.Id,
+                Email = user.Email,
+                UserName = user.UserName,
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+            });
         }
     }
 }

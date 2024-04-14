@@ -1,8 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace MealsOrderingApplication.Domain.DTOs.MealDTO
 {
-    public class UpdateMealDTO : BaseMealDTO
+    public class UpdateMealDTO : BaseMealDTO, IUpdateDTO
     {
 
         public new string? Name { get; set; }

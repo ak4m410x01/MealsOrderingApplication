@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealsOrderingApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240412125801_InitialCreate")]
+    [Migration("20240414124149_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -165,6 +165,7 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -172,10 +173,14 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
@@ -192,10 +197,12 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
@@ -207,6 +214,7 @@ namespace MealsOrderingApplication.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
@@ -254,15 +262,15 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "982927be-fde5-4057-b3a3-995e53588279",
-                            ConcurrencyStamp = "78be82a0-23d0-4e38-bf71-91cb993668c3",
+                            Id = "1f59b8bc-aaa2-4bee-a5c4-7d689f2e67bf",
+                            ConcurrencyStamp = "18d680e2-a289-4a38-9c71-72024e96b2fa",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "4d0befef-da17-4458-b519-235410025892",
-                            ConcurrencyStamp = "8caeef4c-9683-48be-a72b-d427e682c922",
+                            Id = "8912a2d7-1545-4965-845b-5b4c014b9d4e",
+                            ConcurrencyStamp = "5befb309-0c6f-4a98-aa37-fe95930ff93f",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Admin> builder)
         {
-            // Ignore This Table From Migrations
+            // Config Table Name for Admin Entity
             builder.ToTable("Admins", "User");
         }
     }

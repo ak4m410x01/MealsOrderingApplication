@@ -41,15 +41,7 @@ namespace MealsOrderingApplication.API.Controllers
             if ((await _unitOfWork.Categories.GetByIdAsync(model.CategoryId)) is null)
                 return BadRequest(new { CategoryId = "Invalid Category Id" });
 
-            Drink drink = new Drink()
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                CategoryId = model.CategoryId,
-            };
-
-            await _unitOfWork.Drinks.AddAsync(drink);
+            Drink drink = await _unitOfWork.Drinks.AddAsync(model);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new DrinkDTODetails()
@@ -80,30 +72,17 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, UpdateDrinkDTO model)
+        public async Task<IActionResult> UpdateAsync(int id, UpdateDrinkDTO dto)
         {
             Drink? drink = await _unitOfWork.Drinks.GetByIdAsync(id);
             if (drink is null)
                 return NotFound(new { error = "No Drinks found with this Id" });
 
+            if ((await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId ?? default)) is null)
+                return BadRequest(new { CategoryId = "Invalid Category Id" });
 
-            if (model.Name is not null)
-                drink.Name = model.Name;
 
-            if (model.Description is not null)
-                drink.Description = model.Description;
-
-            if (model.Price is not null)
-                drink.Price = (double)model.Price;
-
-            if (model.CategoryId is not null)
-            {
-                int categoryId = (int)model.CategoryId;
-                if ((await _unitOfWork.Categories.GetByIdAsync(categoryId)) is null)
-                    return BadRequest(new { error = "Invalid Category Id" });
-                drink.CategoryId = categoryId;
-            }
-
+            drink = await _unitOfWork.Drinks.UpdateAsync(drink, dto);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new MealDTODetails()

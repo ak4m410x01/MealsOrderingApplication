@@ -15,4 +15,8 @@
 	  <ProjectReference Include="..\MealsOrderingApplication.Domain\MealsOrderingApplication.Domain.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Helpers\Exception\" />
+	</ItemGroup>
+
 </Project>

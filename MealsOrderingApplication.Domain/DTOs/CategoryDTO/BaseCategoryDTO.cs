@@ -1,10 +1,8 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace MealsOrderingApplication.Domain.DTOs.CategoryDTO
 {
-    public class BaseCategoryDTO
+    public class BaseCategoryDTO : BaseDTO
     {
         [Required(ErrorMessage = "The Name field is required.")]
         public string Name { get; set; } = default!;

@@ -1,7 +1,7 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
+using MealsOrderingApplication.Domain.DTOs.MealDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
-using System.Xml.Linq;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
@@ -11,21 +11,41 @@ namespace MealsOrderingApplication.Services.Repositories
         {
         }
 
-        public override void Delete(Meal entity)
+        public override async Task<Meal> MapAddDtoToEntity<TDto>(TDto dto)
         {
-            Product? product = _context.Set<Product>().Find(entity.Id);
-            if (product is null)
-                throw new NullReferenceException("Can't Find Product");
+            if (dto is AddMealDTO addDto)
+            {
+                return await Task.FromResult(new Meal
+                {
+                    Name = addDto.Name,
+                    Description = addDto.Description,
+                    Price = addDto.Price,
+                    CategoryId = addDto.CategoryId,
+                });
+            }
 
-            _context.Set<Product>().Remove(product);
+            throw new ArgumentException("Invalid DTO type. Expected AddMealDTO.");
         }
-        public override async Task DeleteAsync(Meal entity)
-        {
-            Product? product = await _context.Set<Product>().FindAsync(entity.Id);
-            if (product is null)
-                throw new NullReferenceException("Can't Find Product");
 
-            await Task.FromResult(_context.Set<Product>().Remove(product));
+        public override async Task<Meal> MapUpdateDtoToEntity<TDto>(Meal entity, TDto dto)
+        {
+            if (dto is UpdateMealDTO updateDto)
+            {
+                if (updateDto.Name is not null)
+                    entity.Name = updateDto.Name;
+
+                if (updateDto.Description is not null)
+                    entity.Description = updateDto.Description;
+
+                if (updateDto.Price is not null)
+                    entity.Price = updateDto.Price ?? default;
+
+                if (updateDto.CategoryId is not null)
+                    entity.CategoryId = (int)updateDto.CategoryId;
+
+                return await Task.FromResult(entity);
+            }
+            throw new ArgumentException("Invalid DTO type. Expected UpdateMealDTO.");
         }
     }
 }

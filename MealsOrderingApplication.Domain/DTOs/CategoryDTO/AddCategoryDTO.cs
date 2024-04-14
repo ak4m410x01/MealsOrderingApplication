@@ -1,6 +1,8 @@
-﻿namespace MealsOrderingApplication.Domain.DTOs.CategoryDTO
+﻿using MealsOrderingApplication.Domain.Interfaces.DTOs;
+
+namespace MealsOrderingApplication.Domain.DTOs.CategoryDTO
 {
-    public class AddCategoryDTO : BaseCategoryDTO
+    public class AddCategoryDTO : BaseCategoryDTO, IAddDTO
     {
     }
 }

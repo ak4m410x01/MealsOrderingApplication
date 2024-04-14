@@ -1,11 +1,10 @@
-﻿using MealsOrderingApplication.Domain.IdentityEntities;
-using MealsOrderingApplication.Domain;
+﻿using MealsOrderingApplication.Domain;
+using MealsOrderingApplication.Domain.DTOs.AdminDTO;
+using MealsOrderingApplication.Domain.Entities;
+using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using MealsOrderingApplication.Domain.DTOs.Customer;
-using MealsOrderingApplication.Domain.Entities;
-using MealsOrderingApplication.Domain.DTOs.Admin;
-using MealsOrderingApplication.Domain.Models;
 
 namespace MealsOrderingApplication.API.Controllers
 {
@@ -22,6 +21,7 @@ namespace MealsOrderingApplication.API.Controllers
         private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
 
+        // Retrieve All Admins
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
         {
@@ -32,20 +32,22 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = c.Id,
                 FirstName = c.FirstName,
                 LastName = c.LastName,
-                Email = c.Email,
-                Username = c.UserName
+                Email = c.Email!,
+                Username = c.UserName!
             }));
         }
 
+
+        // Add new Admin
         [HttpPost]
-        public async Task<IActionResult> AddAsync(AddAdminDTO model)
+        public async Task<IActionResult> AddAsync(AddAdminDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            AuthanticationModel authModel = await _unitOfWork.Admins.AddAsync(model);
+            AuthanticationModel authModel = await _unitOfWork.Admins.CreateAsync(dto);
             if (!authModel.IsAuthenticated)
-                return BadRequest(authModel.Message);
+                return BadRequest(new { error = authModel.Message });
 
             await _unitOfWork.CompleteAsync();
 
@@ -54,10 +56,11 @@ namespace MealsOrderingApplication.API.Controllers
                 UserId = authModel.UserId,
                 Email = authModel.Email,
                 Username = authModel.UserName,
-                Token = authModel.AccessToken,
             });
         }
 
+
+        // Retrieve Admin By Id
         [HttpGet("{id}")]
         public async Task<IActionResult> GetByIdAsync(string id)
         {
@@ -70,13 +73,15 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = admin.Id,
                 FirstName = admin.FirstName,
                 LastName = admin.LastName,
-                Email = admin.Email,
-                Username = admin.UserName
+                Email = admin.Email!,
+                Username = admin.UserName!
             });
         }
 
+
+        // Update exists Admin
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(string id, UpdateAdminDTO model)
+        public async Task<IActionResult> UpdateAsync(string id, UpdateAdminDTO dto)
         {
             Admin? admin = await _unitOfWork.Admins.GetByIdAsync(id);
             if (admin is null)
@@ -85,22 +90,7 @@ namespace MealsOrderingApplication.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if (model.FirstName is not null)
-                admin.FirstName = model.FirstName;
-
-            if (model.LastName is not null)
-                admin.LastName = model.LastName;
-
-            if (model.Email is not null)
-                admin.Email = model.Email;
-
-            if (model.Username is not null)
-                admin.UserName = model.Username;
-
-            if (model.Password is not null)
-                admin.PasswordHash = _userManager.PasswordHasher.HashPassword(admin, model.Password);
-
-            await _unitOfWork.Admins.UpdateAsync(admin);
+            await _unitOfWork.Admins.UpdateAsync(admin, dto);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new AdminDTODetails()
@@ -108,11 +98,13 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = admin.Id,
                 FirstName = admin.FirstName,
                 LastName = admin.LastName,
-                Email = admin.Email,
-                Username = admin.UserName
+                Email = admin.Email!,
+                Username = admin.UserName!
             });
         }
 
+
+        // Delete Admin
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(string id)
         {

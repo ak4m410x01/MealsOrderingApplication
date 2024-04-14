@@ -1,11 +1,8 @@
-﻿using MealsOrderingApplication.Domain.DTOs.Admin;
-using MealsOrderingApplication.Domain.Entities;
-using MealsOrderingApplication.Domain.Models;
+﻿using MealsOrderingApplication.Domain.Entities;
 
 namespace MealsOrderingApplication.Domain.Interfaces
 {
-    public interface IAdminRepository : IBaseRepository<Admin>
+    public interface IAdminRepository : IApplicationUserRepository<Admin>
     {
-        public Task<AuthanticationModel> AddAsync(AddAdminDTO model);
     }
 }

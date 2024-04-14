@@ -8,8 +8,32 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<ApplicationUser> builder)
         {
-            // Config Table Name
+            // Config Table Name for ApplicationUser Entity
             builder.ToTable("Users", "Security");
+
+            // Config Properties
+            builder.HasKey(x => x.Id);
+
+            builder.Property(x => x.FirstName)
+                   .HasMaxLength(100)
+                   .IsRequired();
+
+            builder.Property(x => x.LastName)
+                   .HasMaxLength(100)
+                   .IsRequired();
+
+            builder.Property(x => x.Email)
+                   .IsRequired();
+
+            builder.Property(x => x.UserName)
+                   .IsRequired();
+
+            builder.Property(x => x.PasswordHash)
+                   .IsRequired();
+
+            builder.Property(x => x.PhoneNumber)
+                   .HasMaxLength(11)
+                   .IsRequired(false);
 
             // Config Inheritance as TPC
             builder.UseTptMappingStrategy();

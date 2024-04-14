@@ -32,14 +32,9 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync(AddCategoryDTO model)
+        public async Task<IActionResult> AddAsync(AddCategoryDTO dto)
         {
-            Category category = new Category()
-            {
-                Name = model.Name,
-                Description = model.Description,
-            };
-            await _unitOfWork.Categories.AddAsync(category);
+            Category category = await _unitOfWork.Categories.AddAsync(dto);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new CategoryDTODetails()
@@ -66,17 +61,14 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, UpdateCategoryDTO model)
+        public async Task<IActionResult> UpdateAsync(int id, UpdateCategoryDTO dto)
         {
             Category? category = await _unitOfWork.Categories.GetByIdAsync(id);
             if (category is null)
                 return NotFound(new { error = "No Categories found with this Id" });
 
-            if (model.Name is not null)
-                category.Name = model.Name;
 
-            if (model.Description is not null)
-                category.Description = model.Description;
+            await _unitOfWork.Categories.UpdateAsync(category, dto);
 
             await _unitOfWork.CompleteAsync();
             return Ok(new CategoryDTODetails()

@@ -40,15 +40,7 @@ namespace MealsOrderingApplication.API.Controllers
             if ((await _unitOfWork.Categories.GetByIdAsync(model.CategoryId)) is null)
                 return BadRequest(new { CategoryId = "Invalid Category Id" });
 
-            Meal meal = new Meal()
-            {
-                Name = model.Name,
-                Description = model.Description,
-                Price = model.Price,
-                CategoryId = model.CategoryId,
-            };
-
-            await _unitOfWork.Meals.AddAsync(meal);
+            Meal meal = await _unitOfWork.Meals.AddAsync(model);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new MealDTODetails()
@@ -79,30 +71,19 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAsync(int id, UpdateMealDTO model)
+        public async Task<IActionResult> UpdateAsync(int id, UpdateMealDTO dto)
         {
             Meal? meal = await _unitOfWork.Meals.GetByIdAsync(id);
             if (meal is null)
                 return NotFound(new { error = "No meals found with this Id" });
 
-
-            if (model.Name is not null)
-                meal.Name = model.Name;
-
-            if (model.Description is not null)
-                meal.Description = model.Description;
-
-            if (model.Price is not null)
-                meal.Price = (double)model.Price;
-
-            if (model.CategoryId is not null)
+            if (dto.CategoryId is not null)
             {
-                int categoryId = (int)model.CategoryId;
-                if ((await _unitOfWork.Categories.GetByIdAsync(categoryId)) is null)
+                if ((await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId)) is null)
                     return BadRequest(new { error = "Invalid Category Id" });
-                meal.CategoryId = categoryId;
             }
 
+            meal = await _unitOfWork.Meals.UpdateAsync(meal, dto);
             await _unitOfWork.CompleteAsync();
 
             return Ok(new MealDTODetails()

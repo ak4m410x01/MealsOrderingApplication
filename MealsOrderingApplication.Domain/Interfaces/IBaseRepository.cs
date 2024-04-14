@@ -1,23 +1,27 @@
-﻿namespace MealsOrderingApplication.Domain.Interfaces
+﻿using MealsOrderingApplication.Domain.Interfaces.DTOs;
+
+namespace MealsOrderingApplication.Domain.Interfaces
 {
-    public interface IBaseRepository<T> where T : class
+    public interface IBaseRepository<TEntity> where TEntity : class
     {
-        public IQueryable<T> GetAll();
-        public Task<IQueryable<T>> GetAllAsync();
 
-        public void Add(T entity);
-        public Task AddAsync(T entity);
+        // Retrieve all Entities from Repository
+        Task<IQueryable<TEntity>> GetAllAsync();
 
-        public T? GetById(int id);
-        public Task<T?> GetByIdAsync(int id);
 
-        public T? GetById(string id);
-        public Task<T?> GetByIdAsync(string id);
+        // Add Entity to Repository
+        Task<TEntity> AddAsync<TDto>(TDto dto) where TDto : IAddDTO;
 
-        public void Update(T entity);
-        public Task UpdateAsync(T entity);
 
-        public void Delete(T entity);
-        public Task DeleteAsync(T entity);
+        // Retrive Entity from Repository By Id
+        Task<TEntity?> GetByIdAsync(object id);
+
+
+        // Update Entity in Repository
+        Task<TEntity> UpdateAsync<TDto>(TEntity entity, TDto dto) where TDto : IUpdateDTO;
+
+
+        // Delete Entity from Repository
+        Task DeleteAsync(TEntity entity);
     }
 }
