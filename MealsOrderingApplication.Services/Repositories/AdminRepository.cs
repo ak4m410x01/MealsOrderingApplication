@@ -1,6 +1,5 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain.DTOs.AdminDTO;
-using MealsOrderingApplication.Domain.DTOs.ApplicationUserDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;

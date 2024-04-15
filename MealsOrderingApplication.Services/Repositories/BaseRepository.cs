@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
 using MealsOrderingApplication.Domain.Interfaces.Mapping;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace MealsOrderingApplication.Services.Repositories
@@ -18,7 +19,7 @@ namespace MealsOrderingApplication.Services.Repositories
         // Retrieve all Entities from Repository
         public virtual async Task<IQueryable<TEntity>> GetAllAsync()
         {
-            return await Task.FromResult(_context.Set<TEntity>().AsQueryable());
+            return await Task.FromResult(_context.Set<TEntity>().AsNoTracking().AsQueryable());
         }
 
 
@@ -61,7 +62,7 @@ namespace MealsOrderingApplication.Services.Repositories
         }
         public virtual async Task<bool> IsExists(Expression<Func<TEntity, bool>> predicate)
         {
-            return await Task.FromResult(_context.Set<TEntity>().FirstOrDefault(predicate) is null);
+            return await Task.FromResult(_context.Set<TEntity>().AsNoTracking().FirstOrDefault(predicate) is null);
         }
 
         // Map Add Dto To Entity
