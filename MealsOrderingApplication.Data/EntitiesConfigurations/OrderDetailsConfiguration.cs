@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MealsOrderingApplication.Data.EntitiesConfigurations
 {
+
     public class OrderDetailsConfiguration : IEntityTypeConfiguration<OrderDetails>
     {
         public void Configure(EntityTypeBuilder<OrderDetails> builder)

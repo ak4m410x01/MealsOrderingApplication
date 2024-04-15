@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
 using MealsOrderingApplication.Domain.Interfaces.Mapping;
+using System.Linq.Expressions;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
@@ -11,7 +12,7 @@ namespace MealsOrderingApplication.Services.Repositories
         {
             _context = context;
         }
-        private readonly ApplicationDbContext _context;
+        protected readonly ApplicationDbContext _context;
 
 
         // Retrieve all Entities from Repository
@@ -53,7 +54,15 @@ namespace MealsOrderingApplication.Services.Repositories
             await Task.FromResult(_context.Set<TEntity>().Remove(entity));
         }
 
-
+        // Filter Objects
+        public virtual async Task<IQueryable<TEntity>> FilterBy(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await Task.FromResult(_context.Set<TEntity>().Where(predicate).AsQueryable());
+        }
+        public virtual async Task<bool> IsExists(Expression<Func<TEntity, bool>> predicate)
+        {
+            return await Task.FromResult(_context.Set<TEntity>().FirstOrDefault(predicate) is null);
+        }
 
         // Map Add Dto To Entity
         public abstract Task<TEntity> MapAddDtoToEntity<TDto>(TDto dto) where TDto : IAddDTO;

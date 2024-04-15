@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Product> builder)
         {
-            // Ignore This Table From Migrations
+            // Config Table Name for Product Entity
             builder.ToTable("Products", "Product");
 
             // Config Primary Key

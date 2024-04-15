@@ -9,9 +9,12 @@ namespace MealsOrderingApplication.Services
         public UnitOfWork(
             ApplicationDbContext context,
             ICategoryRepository categories,
-            IMealRepository meals, IDrinkRepository drinks,
+            IMealRepository meals,
+            IDrinkRepository drinks,
             IProductRepository products,
-            ICustomerRepository customers, IAdminRepository admins)
+            ICustomerRepository customers,
+            IAdminRepository admins,
+            IOrderRepository orders)
         {
             _context = context;
             Categories = categories;
@@ -20,6 +23,7 @@ namespace MealsOrderingApplication.Services
             Products = products;
             Customers = customers;
             Admins = admins;
+            Orders = orders;
         }
 
         private readonly ApplicationDbContext _context;
@@ -30,6 +34,7 @@ namespace MealsOrderingApplication.Services
         public IDrinkRepository Drinks { get; private set; }
         public ICustomerRepository Customers { get; private set; }
         public IAdminRepository Admins { get; private set; }
+        public IOrderRepository Orders { get; private set; }
 
         public int Complete()
         {

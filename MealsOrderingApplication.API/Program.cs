@@ -39,6 +39,7 @@ namespace MealsOrderingApplication.API
             builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<JWTToken, JWTToken>();
 

@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Meal> builder)
         {
-            // Config Table Name
+            // Config Table Name for Meal Entity
             builder.ToTable("Meals", "Product");
         }
     }

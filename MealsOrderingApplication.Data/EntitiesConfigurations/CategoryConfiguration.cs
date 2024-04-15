@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<Category> builder)
         {
-            // Config Table Name
+            // Config Table Name for Category Entity
             builder.ToTable("Categories", "Product");
 
             // Config Primary Key

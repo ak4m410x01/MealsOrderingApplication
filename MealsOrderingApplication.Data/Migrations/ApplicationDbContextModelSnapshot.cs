@@ -125,26 +125,18 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.ProductOrderDetails", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("ProductId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("OrderDetailsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductId", "OrderDetailsId");
 
                     b.HasIndex("OrderDetailsId");
-
-                    b.HasIndex("ProductId");
 
                     b.ToTable("ProductOrderDetails", "Product");
                 });
@@ -259,15 +251,15 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1f59b8bc-aaa2-4bee-a5c4-7d689f2e67bf",
-                            ConcurrencyStamp = "18d680e2-a289-4a38-9c71-72024e96b2fa",
+                            Id = "ec1b6af8-9ed8-455a-9a85-018ded3766f4",
+                            ConcurrencyStamp = "34ebd885-9579-4628-ae9d-a6e2fb6d34e4",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "8912a2d7-1545-4965-845b-5b4c014b9d4e",
-                            ConcurrencyStamp = "5befb309-0c6f-4a98-aa37-fe95930ff93f",
+                            Id = "3567b8ff-18a5-4139-a56c-649627856813",
+                            ConcurrencyStamp = "3f6c9261-5134-4028-8294-ee4946a81327",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

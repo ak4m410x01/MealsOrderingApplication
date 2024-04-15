@@ -46,7 +46,7 @@ namespace MealsOrderingApplication.API.Controllers
 
             AuthanticationModel authModel = await _unitOfWork.Customers.CreateAsync(model);
             if (!authModel.IsAuthenticated)
-                return BadRequest(authModel.Message);
+                return BadRequest(new { error = authModel.Message });
 
             await _unitOfWork.CompleteAsync();
 

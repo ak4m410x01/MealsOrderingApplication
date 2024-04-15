@@ -348,15 +348,13 @@ namespace MealsOrderingApplication.Data.Migrations
                 schema: "Product",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    OrderDetailsId = table.Column<int>(type: "int", nullable: false)
+                    OrderDetailsId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProductOrderDetails", x => x.Id);
+                    table.PrimaryKey("PK_ProductOrderDetails", x => new { x.ProductId, x.OrderDetailsId });
                     table.ForeignKey(
                         name: "FK_ProductOrderDetails_OrderDetails_OrderDetailsId",
                         column: x => x.OrderDetailsId,
@@ -379,8 +377,8 @@ namespace MealsOrderingApplication.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "1f59b8bc-aaa2-4bee-a5c4-7d689f2e67bf", "18d680e2-a289-4a38-9c71-72024e96b2fa", "User", "USER" },
-                    { "8912a2d7-1545-4965-845b-5b4c014b9d4e", "5befb309-0c6f-4a98-aa37-fe95930ff93f", "Admin", "ADMIN" }
+                    { "3567b8ff-18a5-4139-a56c-649627856813", "3f6c9261-5134-4028-8294-ee4946a81327", "Admin", "ADMIN" },
+                    { "ec1b6af8-9ed8-455a-9a85-018ded3766f4", "34ebd885-9579-4628-ae9d-a6e2fb6d34e4", "User", "USER" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -401,12 +399,6 @@ namespace MealsOrderingApplication.Data.Migrations
                 schema: "Product",
                 table: "ProductOrderDetails",
                 column: "OrderDetailsId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ProductOrderDetails_ProductId",
-                schema: "Product",
-                table: "ProductOrderDetails",
-                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",

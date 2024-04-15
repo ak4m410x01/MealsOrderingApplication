@@ -8,7 +8,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
     {
         public void Configure(EntityTypeBuilder<IdentityRole> builder)
         {
-            // Config Table Name
+            // Config Table Name for IdentityRole Entity
             builder.ToTable("Roles", "Security");
 
             builder.HasData(LoadRoles());
