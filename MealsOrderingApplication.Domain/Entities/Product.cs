@@ -10,5 +10,6 @@
         public Category Category { get; set; }
 
         public IEnumerable<OrderDetails> OrderDetails { get; set; }
+        public IEnumerable<Review> Reviews { get; set; }
     }
 }

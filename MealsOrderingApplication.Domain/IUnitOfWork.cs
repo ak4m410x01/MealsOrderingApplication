@@ -11,6 +11,7 @@ namespace MealsOrderingApplication.Domain
         public IMealRepository Meals { get; }
         public IDrinkRepository Drinks { get; }
         public IOrderRepository Orders { get; }
+        public IReviewRepository Reviews { get; }
 
         public int Complete();
         public Task<int> CompleteAsync();

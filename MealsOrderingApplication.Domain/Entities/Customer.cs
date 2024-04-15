@@ -7,5 +7,6 @@ namespace MealsOrderingApplication.Domain.Entities
         public string Location { get; set; } = default!;
 
         public IEnumerable<Order> Orders { get; set; }
+        public IEnumerable<Review> Reviews { get; set; }
     }
 }

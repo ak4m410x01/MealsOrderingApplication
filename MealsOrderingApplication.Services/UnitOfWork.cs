@@ -14,7 +14,8 @@ namespace MealsOrderingApplication.Services
             IProductRepository products,
             ICustomerRepository customers,
             IAdminRepository admins,
-            IOrderRepository orders)
+            IOrderRepository orders,
+            IReviewRepository reviews)
         {
             _context = context;
             Categories = categories;
@@ -24,6 +25,7 @@ namespace MealsOrderingApplication.Services
             Customers = customers;
             Admins = admins;
             Orders = orders;
+            Reviews = reviews;
         }
 
         private readonly ApplicationDbContext _context;
@@ -35,6 +37,7 @@ namespace MealsOrderingApplication.Services
         public ICustomerRepository Customers { get; private set; }
         public IAdminRepository Admins { get; private set; }
         public IOrderRepository Orders { get; private set; }
+        public IReviewRepository Reviews { get; private set; }
 
         public int Complete()
         {

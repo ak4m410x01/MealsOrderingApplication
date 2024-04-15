@@ -6,6 +6,8 @@ namespace MealsOrderingApplication.Domain.DTOs.ProductDTO
     {
         [Required(ErrorMessage = "The Name field is required.")]
         public string Name { get; set; } = default!;
+
+        [StringLength(5_000, ErrorMessage = "The Description field must be less than 5000 characters.")]
         public string? Description { get; set; }
 
         [Required(ErrorMessage = "The Price field is required.")]
