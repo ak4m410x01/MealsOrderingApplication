@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealsOrderingApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240415124055_AddReviewsEntity")]
-    partial class AddReviewsEntity
+    [Migration("20240415143130_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -164,7 +164,7 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("stars")
+                    b.Property<int>("Stars")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -286,15 +286,15 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "87f9fd03-cd43-4728-b4ee-aa861269f98e",
-                            ConcurrencyStamp = "68d2a71b-a980-47e7-b6df-6b904210080b",
+                            Id = "424e4556-b7d4-4101-be56-b2a6a9cdfcdf",
+                            ConcurrencyStamp = "b1ccccbc-3536-4973-bf5d-e1b1cbfab5f3",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "80dbbd08-cf63-490a-b5a7-2e755cf38c7a",
-                            ConcurrencyStamp = "359347e3-69e7-4bfe-bac2-f55352a27056",
+                            Id = "4d41c8b4-5c86-45ab-8423-71a9d4bc634d",
+                            ConcurrencyStamp = "54f8a043-d6e3-42c0-b3f3-08fb887b3fd6",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });

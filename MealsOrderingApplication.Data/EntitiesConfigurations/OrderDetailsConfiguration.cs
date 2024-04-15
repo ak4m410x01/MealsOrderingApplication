@@ -29,8 +29,6 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
             builder.HasMany(o => o.Products)
                    .WithMany(c => c.OrderDetails)
                    .UsingEntity<ProductOrderDetails>();
-
-
         }
     }
 }

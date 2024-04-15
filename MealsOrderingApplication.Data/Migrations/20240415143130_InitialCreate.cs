@@ -322,6 +322,37 @@ namespace MealsOrderingApplication.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Reviews",
+                schema: "Product",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Stars = table.Column<int>(type: "int", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalSchema: "User",
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reviews_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalSchema: "Product",
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OrderDetails",
                 schema: "Product",
                 columns: table => new
@@ -377,8 +408,8 @@ namespace MealsOrderingApplication.Data.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "3567b8ff-18a5-4139-a56c-649627856813", "3f6c9261-5134-4028-8294-ee4946a81327", "Admin", "ADMIN" },
-                    { "ec1b6af8-9ed8-455a-9a85-018ded3766f4", "34ebd885-9579-4628-ae9d-a6e2fb6d34e4", "User", "USER" }
+                    { "424e4556-b7d4-4101-be56-b2a6a9cdfcdf", "b1ccccbc-3536-4973-bf5d-e1b1cbfab5f3", "User", "USER" },
+                    { "4d41c8b4-5c86-45ab-8423-71a9d4bc634d", "54f8a043-d6e3-42c0-b3f3-08fb887b3fd6", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -405,6 +436,18 @@ namespace MealsOrderingApplication.Data.Migrations
                 schema: "Product",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_CustomerId",
+                schema: "Product",
+                table: "Reviews",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reviews_ProductId",
+                schema: "Product",
+                table: "Reviews",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
@@ -470,6 +513,10 @@ namespace MealsOrderingApplication.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductOrderDetails",
+                schema: "Product");
+
+            migrationBuilder.DropTable(
+                name: "Reviews",
                 schema: "Product");
 
             migrationBuilder.DropTable(
