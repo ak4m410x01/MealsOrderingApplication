@@ -47,6 +47,7 @@ namespace MealsOrderingApplication.API.Controllers
             if (dto.ProductsId.Count <= 0)
                 return BadRequest(new { error = "Must be at least one item in ProductsId" });
 
+
             for (int i = 0; i < dto.ProductsId.Count; i++)
             {
                 if (dto.ProductsId[i] <= 0)
@@ -62,16 +63,24 @@ namespace MealsOrderingApplication.API.Controllers
                     return NotFound(new { error = $"Quantity must be greater than 0." });
             }
 
-            Order order = await _unitOfWork.Orders.AddAsync(dto);
-            await _unitOfWork.CompleteAsync();
-
-            return Ok(new
+            try
             {
-                order.Id,
-                order.Description,
-                order.CustomerId,
-                order.CreatedAt,
-            });
+                Order order = await _unitOfWork.Orders.AddAsync(dto);
+                await _unitOfWork.CompleteAsync();
+
+                return Ok(new
+                {
+                    order.Id,
+                    order.Description,
+                    order.CustomerId,
+                    order.CreatedAt,
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest("ProductId Already exists!");
+            }
+
         }
 
         [HttpGet("{id}")]
