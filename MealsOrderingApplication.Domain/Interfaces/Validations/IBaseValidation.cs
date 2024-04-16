@@ -1,7 +1,6 @@
 ﻿namespace MealsOrderingApplication.Domain.Interfaces.Validations
 {
-    public interface IBaseValidation<T> where T : class
+    public interface IBaseValidation
     {
-        string IsValid(T entity);
     }
 }

@@ -3,11 +3,13 @@ using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 using MealsOrderingApplication.Services;
 using MealsOrderingApplication.Services.Helpers;
 using MealsOrderingApplication.Services.IServices;
 using MealsOrderingApplication.Services.Repositories;
 using MealsOrderingApplication.Services.Services;
+using MealsOrderingApplication.Services.Validation.OrderValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +44,12 @@ namespace MealsOrderingApplication.API
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+            // Validation Services
+            builder.Services.AddScoped<IAddOrderValidation, AddOrderValidation>();
+            builder.Services.AddScoped<IUpdateOrderValidation, UpdateOrderValidation>();
+
+
             builder.Services.AddScoped<JWTToken, JWTToken>();
 
 
