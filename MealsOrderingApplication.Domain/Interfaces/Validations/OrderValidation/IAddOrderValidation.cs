@@ -1,6 +1,6 @@
 ﻿namespace MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation
 {
-    public interface IAddOrderValidation : IAddValidation
+    public interface IAddOrderValidation : IBaseOrderValidation, IAddValidation
     {
     }
 }

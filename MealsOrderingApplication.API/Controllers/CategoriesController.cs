@@ -67,7 +67,6 @@ namespace MealsOrderingApplication.API.Controllers
             if (category is null)
                 return NotFound(new { error = "No Categories found with this Id" });
 
-
             await _unitOfWork.Categories.UpdateAsync(category, dto);
 
             await _unitOfWork.CompleteAsync();

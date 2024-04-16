@@ -1,4 +1,5 @@
-﻿using MealsOrderingApplication.Domain;
+﻿using DrinksOrderingApplication.Domain.Interfaces.Validations.DrinkValidation;
+using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.DTOs.DrinkDTO;
 using MealsOrderingApplication.Domain.DTOs.MealDTO;
 using MealsOrderingApplication.Domain.Entities;
@@ -11,12 +12,16 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class DrinksController : ControllerBase
     {
-        public DrinksController(IUnitOfWork unitOfWork)
+        public DrinksController(IUnitOfWork unitOfWork, IAddDrinkValidation addDrinkValidation, IUpdateDrinkValidation updateDrinkValidation)
         {
             _unitOfWork = unitOfWork;
+            _addDrinkValidation = addDrinkValidation;
+            _updateDrinkValidation = updateDrinkValidation;
         }
 
-        private readonly IUnitOfWork _unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddDrinkValidation _addDrinkValidation;
+        protected readonly IUpdateDrinkValidation _updateDrinkValidation;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -38,8 +43,9 @@ namespace MealsOrderingApplication.API.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if ((await _unitOfWork.Categories.GetByIdAsync(model.CategoryId)) is null)
-                return BadRequest(new { CategoryId = "Invalid Category Id" });
+            string message = await _addDrinkValidation.AddIsValidAsync(model);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             Drink drink = await _unitOfWork.Drinks.AddAsync(model);
             await _unitOfWork.CompleteAsync();
@@ -78,9 +84,9 @@ namespace MealsOrderingApplication.API.Controllers
             if (drink is null)
                 return NotFound(new { error = "No Drinks found with this Id" });
 
-            if ((await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId ?? default)) is null)
-                return BadRequest(new { CategoryId = "Invalid Category Id" });
-
+            string message = await _updateDrinkValidation.UpdateIsValidAsync(dto);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             drink = await _unitOfWork.Drinks.UpdateAsync(drink, dto);
             await _unitOfWork.CompleteAsync();

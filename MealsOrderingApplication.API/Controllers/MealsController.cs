@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Domain.DTOs.CategoryDTO;
 using MealsOrderingApplication.Domain.DTOs.MealDTO;
 using MealsOrderingApplication.Domain.Entities;
+using MealsOrderingApplication.Domain.Interfaces.Validations.MealValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MealsOrderingApplication.API.Controllers
@@ -10,12 +11,16 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class MealsController : ControllerBase
     {
-        public MealsController(IUnitOfWork unitOfWork)
+        public MealsController(IUnitOfWork unitOfWork, IAddMealValidation addMealValidation, IUpdateMealValidation updateMealValidation)
         {
             _unitOfWork = unitOfWork;
+            _addMealValidation = addMealValidation;
+            _updateMealValidation = updateMealValidation;
         }
 
-        private readonly IUnitOfWork _unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddMealValidation _addMealValidation;
+        protected readonly IUpdateMealValidation _updateMealValidation;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -32,13 +37,14 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync(AddMealDTO model)
+        public async Task<IActionResult> UpdateAsync(AddMealDTO model)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            if ((await _unitOfWork.Categories.GetByIdAsync(model.CategoryId)) is null)
-                return BadRequest(new { CategoryId = "Invalid Category Id" });
+            string message = await _addMealValidation.AddIsValidAsync(model);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             Meal meal = await _unitOfWork.Meals.AddAsync(model);
             await _unitOfWork.CompleteAsync();
@@ -77,11 +83,9 @@ namespace MealsOrderingApplication.API.Controllers
             if (meal is null)
                 return NotFound(new { error = "No meals found with this Id" });
 
-            if (dto.CategoryId is not null)
-            {
-                if ((await _unitOfWork.Categories.GetByIdAsync(dto.CategoryId)) is null)
-                    return BadRequest(new { error = "Invalid Category Id" });
-            }
+            string message = await _updateMealValidation.UpdateIsValidAsync(dto);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             meal = await _unitOfWork.Meals.UpdateAsync(meal, dto);
             await _unitOfWork.CompleteAsync();

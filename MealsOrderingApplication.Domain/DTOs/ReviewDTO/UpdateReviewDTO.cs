@@ -11,9 +11,6 @@ namespace MealsOrderingApplication.Domain.DTOs.ReviewDTO
         [StringLength(1_000, ErrorMessage = "The Description field must be less than 1000 characters.")]
         public new string? Comment { get; set; }
 
-        [Range(1, int.MaxValue, ErrorMessage = "The ProductId must be greater than 0.")]
-        public new int? ProductId { get; set; }
-
     }
 
 }

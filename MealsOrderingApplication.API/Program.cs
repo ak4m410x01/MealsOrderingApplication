@@ -1,15 +1,29 @@
 
+using DrinksOrderingApplication.Domain.Interfaces.Validations.DrinkValidation;
+using DrinksOrderingApplication.Services.Validation.DrinkValidation;
 using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.Validations.AdminValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ApplicationUserValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.CustomerValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.MealValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ProductValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ReviewValidation;
 using MealsOrderingApplication.Services;
 using MealsOrderingApplication.Services.Helpers;
 using MealsOrderingApplication.Services.IServices;
 using MealsOrderingApplication.Services.Repositories;
 using MealsOrderingApplication.Services.Services;
+using MealsOrderingApplication.Services.Validation.AdminValidation;
+using MealsOrderingApplication.Services.Validation.ApplicationUserValidation;
+using MealsOrderingApplication.Services.Validation.CustomerValidation;
+using MealsOrderingApplication.Services.Validation.MealValidation;
 using MealsOrderingApplication.Services.Validation.OrderValidation;
+using MealsOrderingApplication.Services.Validation.ProductValidation;
+using MealsOrderingApplication.Services.Validation.ReviewValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -46,9 +60,29 @@ namespace MealsOrderingApplication.API
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             // Validation Services
+            builder.Services.AddScoped<IAddApplicationUserValidation, AddApplicationUserValidation>();
+            builder.Services.AddScoped<IUpdateApplicationUserValidation, UpdateApplicationUserValidation>();
+
+            builder.Services.AddScoped<IAddAdminValidation, AddAdminValidation>();
+            builder.Services.AddScoped<IUpdateAdminValidation, UpdateAdminValidation>();
+
+            builder.Services.AddScoped<IAddCustomerValidation, AddCustomerValidation>();
+            builder.Services.AddScoped<IUpdateCustomerValidation, UpdateCustomerValidation>();
+
+            builder.Services.AddScoped<IAddProductValidation, AddProductValidation>();
+            builder.Services.AddScoped<IUpdateProductValidation, UpdateProductValidation>();
+
+            builder.Services.AddScoped<IAddMealValidation, AddMealValidation>();
+            builder.Services.AddScoped<IUpdateMealValidation, UpdateMealValidation>();
+
+            builder.Services.AddScoped<IAddDrinkValidation, AddDrinkValidation>();
+            builder.Services.AddScoped<IUpdateDrinkValidation, UpdateDrinkValidation>();
+
             builder.Services.AddScoped<IAddOrderValidation, AddOrderValidation>();
             builder.Services.AddScoped<IUpdateOrderValidation, UpdateOrderValidation>();
 
+            builder.Services.AddScoped<IAddReviewValidation, AddReviewValidation>();
+            builder.Services.AddScoped<IUpdateReviewValidation, UpdateReviewValidation>();
 
             builder.Services.AddScoped<JWTToken, JWTToken>();
 

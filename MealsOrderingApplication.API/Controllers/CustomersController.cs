@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Domain.DTOs.CustomerDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Domain.Interfaces.Validations.CustomerValidation;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +13,16 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        public CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation)
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+            _updateCustomerValidation = updateCustomerValidation;
         }
 
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly UserManager<ApplicationUser> _userManager;
+        protected readonly IUpdateCustomerValidation _updateCustomerValidation;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -86,6 +89,10 @@ namespace MealsOrderingApplication.API.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            string message = await _updateCustomerValidation.UpdateIsValidAsync(dto);
+            if (string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             await _unitOfWork.Customers.UpdateAsync(customer, dto);
             await _unitOfWork.CompleteAsync();

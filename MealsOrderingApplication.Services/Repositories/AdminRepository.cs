@@ -70,7 +70,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 if ((await _userManager.FindByNameAsync(userDto.Username ?? "")) is not null)
                     return new AuthanticationModel() { Message = "Username is Already Exists!" };
 
-                Admin user = new Admin
+                Admin user = new()
                 {
                     FirstName = userDto.FirstName ?? "",
                     LastName = userDto.LastName ?? "",
@@ -81,7 +81,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)
                 {
-                    AuthanticationModel authModel = new AuthanticationModel();
+                    AuthanticationModel authModel = new();
                     foreach (var error in result.Errors)
                     {
                         authModel.Message += error;

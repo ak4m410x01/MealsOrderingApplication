@@ -37,9 +37,6 @@ namespace MealsOrderingApplication.Services.Repositories
                 if (updateDto.Comment is not null)
                     entity.Comment = updateDto.Comment;
 
-                if (updateDto.ProductId is not null)
-                    entity.ProductId = updateDto.ProductId ?? default;
-
 
                 return await Task.FromResult(entity);
             }

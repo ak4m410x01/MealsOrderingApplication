@@ -1,6 +1,8 @@
 ﻿using MealsOrderingApplication.Domain.DTOs.AuthanticationDTO;
+using MealsOrderingApplication.Domain.DTOs.CustomerDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Domain.Interfaces.Validations.CustomerValidation;
 using MealsOrderingApplication.Domain.Models;
 using MealsOrderingApplication.Services.IServices;
 using Microsoft.AspNetCore.Identity;
@@ -10,22 +12,30 @@ namespace MealsOrderingApplication.Services.Services
 {
     public class AuthenticationService : IAuthenticationService
     {
-        public AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt)
+        public AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt, IAddCustomerValidation addCustomerValidation)
         {
             _userManager = userManager;
             _jwt = jwt;
+            _addCustomerValidation = addCustomerValidation;
         }
 
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly JWTToken _jwt;
+        protected readonly UserManager<ApplicationUser> _userManager;
+        protected readonly JWTToken _jwt;
+        protected readonly IAddCustomerValidation _addCustomerValidation;
 
         public async Task<AuthanticationModel> RegisterAsync(RegisterDTO model)
         {
-            if ((await _userManager.FindByEmailAsync(model.Email)) is not null)
-                return new AuthanticationModel() { Message = "Email is Already Exists!" };
+            string message = await _addCustomerValidation.AddIsValidAsync(new AddCustomerDTO()
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Username = model.Username,
+                Password = model.Password,
+            });
 
-            if ((await _userManager.FindByNameAsync(model.Username)) is not null)
-                return new AuthanticationModel() { Message = "Username is Already Exists!" };
+            if (!string.IsNullOrEmpty(message))
+                return new AuthanticationModel() { Message = message };
 
             Customer user = new Customer()
             {

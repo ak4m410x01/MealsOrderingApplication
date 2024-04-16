@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Domain.DTOs.AdminDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
+using MealsOrderingApplication.Domain.Interfaces.Validations.AdminValidation;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,14 +13,14 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class AdminsController : ControllerBase
     {
-        public AdminsController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        public AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation)
         {
             _unitOfWork = unitOfWork;
-            _userManager = userManager;
+            _updateAdminValidation = updateAdminValidation;
         }
 
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly UserManager<ApplicationUser> _userManager;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IUpdateAdminValidation _updateAdminValidation;
 
         // Retrieve All Admins
         [HttpGet]
@@ -89,6 +90,10 @@ namespace MealsOrderingApplication.API.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            string message = await _updateAdminValidation.UpdateIsValidAsync(dto);
+            if (string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             await _unitOfWork.Admins.UpdateAsync(admin, dto);
             await _unitOfWork.CompleteAsync();

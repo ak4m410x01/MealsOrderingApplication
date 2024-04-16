@@ -1,8 +1,10 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain.DTOs.ApplicationUserDTO;
+using MealsOrderingApplication.Domain.DTOs.CustomerDTO;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ApplicationUserValidation;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
@@ -10,12 +12,14 @@ namespace MealsOrderingApplication.Services.Repositories
 {
     public class ApplicationUserRepository : BaseRepository<ApplicationUser>, IApplicationUserRepository<ApplicationUser>
     {
-        public ApplicationUserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : base(context)
+        public ApplicationUserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAddApplicationUserValidation addApplicationUserValidation) : base(context)
         {
             _userManager = userManager;
+            _addApplicationUserValidation = addApplicationUserValidation;
         }
 
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IAddApplicationUserValidation _addApplicationUserValidation;
 
         public override async Task<ApplicationUser> MapAddDtoToEntity<TDto>(TDto dto)
         {
@@ -61,13 +65,11 @@ namespace MealsOrderingApplication.Services.Repositories
         {
             if (dto is AddApplicationUserDTO userDto)
             {
-                if ((await _userManager.FindByEmailAsync(userDto.Email)) is not null)
-                    return new AuthanticationModel() { Message = "Email is Already Exists!" };
+                string message = await _addApplicationUserValidation.AddIsValidAsync(userDto);
+                if (!string.IsNullOrEmpty(message))
+                    return new AuthanticationModel() { Message = message };
 
-                if ((await _userManager.FindByNameAsync(userDto.Username)) is not null)
-                    return new AuthanticationModel() { Message = "Username is Already Exists!" };
-
-                ApplicationUser user = new ApplicationUser
+                ApplicationUser user = new()
                 {
                     FirstName = userDto.FirstName,
                     LastName = userDto.LastName,
@@ -78,7 +80,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)
                 {
-                    AuthanticationModel authModel = new AuthanticationModel();
+                    AuthanticationModel authModel = new();
                     foreach (var error in result.Errors)
                     {
                         authModel.Message += error;

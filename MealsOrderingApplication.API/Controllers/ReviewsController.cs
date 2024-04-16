@@ -1,7 +1,7 @@
 ﻿using MealsOrderingApplication.Domain;
-using MealsOrderingApplication.Domain.DTOs.CategoryDTO;
 using MealsOrderingApplication.Domain.DTOs.ReviewDTO;
 using MealsOrderingApplication.Domain.Entities;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ReviewValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MealsOrderingApplication.API.Controllers
@@ -10,11 +10,15 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        public ReviewsController(IUnitOfWork unitOfWork)
+        public ReviewsController(IUnitOfWork unitOfWork, IAddReviewValidation addReviewValidation, IUpdateReviewValidation updateReviewValidation)
         {
             _unitOfWork = unitOfWork;
+            _addReviewValidation = addReviewValidation;
+            _updateReviewValidation = updateReviewValidation;
         }
-        private readonly IUnitOfWork _unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddReviewValidation _addReviewValidation;
+        protected readonly IUpdateReviewValidation _updateReviewValidation;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -35,11 +39,12 @@ namespace MealsOrderingApplication.API.Controllers
         [HttpPost]
         public async Task<IActionResult> AddAsync(AddReviewDTO dto)
         {
-            if ((await _unitOfWork.Products.GetByIdAsync(dto.ProductId)) is null)
-                return BadRequest(new { error = "Invalid ProductId" });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-            if ((await _unitOfWork.Customers.GetByIdAsync(dto.CustomerId)) is null)
-                return BadRequest(new { error = "Invalid CustomerId" });
+            string message = await _addReviewValidation.AddIsValidAsync(dto);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             Review review = await _unitOfWork.Reviews.AddAsync(dto);
             await _unitOfWork.CompleteAsync();
@@ -78,8 +83,12 @@ namespace MealsOrderingApplication.API.Controllers
             if (review is null)
                 return NotFound(new { error = "No Reviews found with this Id" });
 
-            if (dto.ProductId is not null && (await _unitOfWork.Products.GetByIdAsync(dto.ProductId)) is null)
-                return BadRequest(new { error = "Invalid ProductId" });
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            string message = await _updateReviewValidation.UpdateIsValidAsync(dto);
+            if (!string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             await _unitOfWork.Reviews.UpdateAsync(review, dto);
             await _unitOfWork.CompleteAsync();

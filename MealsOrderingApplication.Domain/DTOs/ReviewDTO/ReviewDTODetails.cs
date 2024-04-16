@@ -7,6 +7,7 @@ namespace MealsOrderingApplication.Domain.DTOs.ReviewDTO
     {
         public int Id { get; set; }
         public string CustomerId { get; set; } = default!;
+        public int ProductId { get; set; } = default!;
     }
 
 }
