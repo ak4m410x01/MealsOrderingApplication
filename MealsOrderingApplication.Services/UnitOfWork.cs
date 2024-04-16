@@ -4,40 +4,27 @@ using MealsOrderingApplication.Domain.Interfaces;
 
 namespace MealsOrderingApplication.Services
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork(
+        ApplicationDbContext context,
+        ICategoryRepository categories,
+        IMealRepository meals,
+        IDrinkRepository drinks,
+        IProductRepository products,
+        ICustomerRepository customers,
+        IAdminRepository admins,
+        IOrderRepository orders,
+        IReviewRepository reviews) : IUnitOfWork
     {
-        public UnitOfWork(
-            ApplicationDbContext context,
-            ICategoryRepository categories,
-            IMealRepository meals,
-            IDrinkRepository drinks,
-            IProductRepository products,
-            ICustomerRepository customers,
-            IAdminRepository admins,
-            IOrderRepository orders,
-            IReviewRepository reviews)
-        {
-            _context = context;
-            Categories = categories;
-            Meals = meals;
-            Drinks = drinks;
-            Products = products;
-            Customers = customers;
-            Admins = admins;
-            Orders = orders;
-            Reviews = reviews;
-        }
+        private readonly ApplicationDbContext _context = context;
 
-        private readonly ApplicationDbContext _context;
-
-        public ICategoryRepository Categories { get; private set; }
-        public IProductRepository Products { get; private set; }
-        public IMealRepository Meals { get; private set; }
-        public IDrinkRepository Drinks { get; private set; }
-        public ICustomerRepository Customers { get; private set; }
-        public IAdminRepository Admins { get; private set; }
-        public IOrderRepository Orders { get; private set; }
-        public IReviewRepository Reviews { get; private set; }
+        public ICategoryRepository Categories { get; private set; } = categories;
+        public IProductRepository Products { get; private set; } = products;
+        public IMealRepository Meals { get; private set; } = meals;
+        public IDrinkRepository Drinks { get; private set; } = drinks;
+        public ICustomerRepository Customers { get; private set; } = customers;
+        public IAdminRepository Admins { get; private set; } = admins;
+        public IOrderRepository Orders { get; private set; } = orders;
+        public IReviewRepository Reviews { get; private set; } = reviews;
 
         public int Complete()
         {
@@ -51,6 +38,7 @@ namespace MealsOrderingApplication.Services
         public void Dispose()
         {
             _context.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -11,16 +11,10 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminsController : ControllerBase
+    public class AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation) : ControllerBase
     {
-        public AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation)
-        {
-            _unitOfWork = unitOfWork;
-            _updateAdminValidation = updateAdminValidation;
-        }
-
-        protected readonly IUnitOfWork _unitOfWork;
-        protected readonly IUpdateAdminValidation _updateAdminValidation;
+        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+        protected readonly IUpdateAdminValidation _updateAdminValidation = updateAdminValidation;
 
         // Retrieve All Admins
         [HttpGet]
@@ -54,12 +48,11 @@ namespace MealsOrderingApplication.API.Controllers
 
             return Ok(new
             {
-                UserId = authModel.UserId,
-                Email = authModel.Email,
+                authModel.UserId,
+                authModel.Email,
                 Username = authModel.UserName,
             });
         }
-
 
         // Retrieve Admin By Id
         [HttpGet("{id}")]

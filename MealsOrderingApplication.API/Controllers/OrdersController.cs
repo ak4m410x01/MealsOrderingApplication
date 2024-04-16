@@ -65,7 +65,7 @@ namespace MealsOrderingApplication.API.Controllers
                     order.CreatedAt,
                 });
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 return BadRequest("ProductId Already exists!");
             }
@@ -117,7 +117,7 @@ namespace MealsOrderingApplication.API.Controllers
                     order.CreatedAt,
                 });
             }
-            catch (NullReferenceException ex)
+            catch (NullReferenceException)
             {
                 return BadRequest("Order doesn't exists!");
             }

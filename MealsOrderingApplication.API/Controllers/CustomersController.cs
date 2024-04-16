@@ -11,18 +11,11 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation) : ControllerBase
     {
-        public CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation)
-        {
-            _unitOfWork = unitOfWork;
-            _userManager = userManager;
-            _updateCustomerValidation = updateCustomerValidation;
-        }
-
-        protected readonly IUnitOfWork _unitOfWork;
-        protected readonly UserManager<ApplicationUser> _userManager;
-        protected readonly IUpdateCustomerValidation _updateCustomerValidation;
+        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+        protected readonly UserManager<ApplicationUser> _userManager = userManager;
+        protected readonly IUpdateCustomerValidation _updateCustomerValidation = updateCustomerValidation;
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()
@@ -55,8 +48,8 @@ namespace MealsOrderingApplication.API.Controllers
 
             return Ok(new
             {
-                UserId = authModel.UserId,
-                Email = authModel.Email,
+                authModel.UserId,
+                authModel.Email,
                 Username = authModel.UserName,
             });
         }
@@ -102,9 +95,9 @@ namespace MealsOrderingApplication.API.Controllers
                 Id = customer.Id,
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
-                Email = customer.Email,
-                Username = customer.UserName,
-                PhoneNumber = customer.PhoneNumber,
+                Email = customer.Email ?? "",
+                Username = customer.UserName ?? "",
+                PhoneNumber = customer.PhoneNumber ?? "",
                 Location = customer.Location,
             });
         }

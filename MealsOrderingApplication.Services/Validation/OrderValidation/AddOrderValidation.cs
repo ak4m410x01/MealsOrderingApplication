@@ -5,12 +5,8 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 
 namespace MealsOrderingApplication.Services.Validation.OrderValidation
 {
-    public class AddOrderValidation : BaseOrderValidation, IAddOrderValidation
+    public class AddOrderValidation(IUnitOfWork unitOfWork) : BaseOrderValidation(unitOfWork), IAddOrderValidation
     {
-        public AddOrderValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
-
         public async Task<string> AddIsValidAsync<TDto>(TDto dto) where TDto : IAddDTO
         {
             if (dto is AddOrderDTO addDto)

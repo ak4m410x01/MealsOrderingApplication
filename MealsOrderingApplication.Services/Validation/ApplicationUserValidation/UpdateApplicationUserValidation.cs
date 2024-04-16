@@ -7,11 +7,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.ApplicationUserValidation
 {
-    public class UpdateApplicationUserValidation : BaseApplicationUserValidation, IUpdateApplicationUserValidation
+    public class UpdateApplicationUserValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : BaseApplicationUserValidation(unitOfWork, userManager), IUpdateApplicationUserValidation
     {
-        public UpdateApplicationUserValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager)
-        {
-        }
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
             if (dto is UpdateApplicationUserDTO updateDto)

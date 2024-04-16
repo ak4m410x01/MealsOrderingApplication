@@ -6,12 +6,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class OrderRepository : BaseRepository<Order>, IOrderRepository
+    public class OrderRepository(ApplicationDbContext context) : BaseRepository<Order>(context), IOrderRepository
     {
-        public OrderRepository(ApplicationDbContext context) : base(context)
-        {
-        }
-
         public override async Task<Order> AddAsync<TDto>(TDto dto)
         {
             if (dto is AddOrderDTO addDto)
@@ -52,7 +48,7 @@ namespace MealsOrderingApplication.Services.Repositories
                     _context.ProductOrderDetails.RemoveRange(productOrderDetails);
 
                     // Update Product Order Details
-                    await AddProductOrderDetailsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities);
+                    await AddProductOrderDetailsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities!);
 
                     // Update Total Price for order products
                     orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
@@ -75,7 +71,7 @@ namespace MealsOrderingApplication.Services.Repositories
         }
         protected virtual async Task<OrderDetails> AddOrderDetailsAsync(Order order)
         {
-            OrderDetails orderDetails = new OrderDetails() { OrderId = order.Id, TotalPrice = 0 };
+            OrderDetails orderDetails = new() { OrderId = order.Id, TotalPrice = 0 };
             await _context.OrderDetails.AddAsync(orderDetails);
             await _context.SaveChangesAsync();
 
@@ -103,7 +99,7 @@ namespace MealsOrderingApplication.Services.Repositories
         protected virtual Dictionary<int, int> CompineProductsQuantities(List<int> productsId, List<int> quantities)
         {
             // Compine Products and Quantities
-            Dictionary<int, int> productsQuantities = new Dictionary<int, int>();
+            Dictionary<int, int> productsQuantities = [];
             for (int i = 0; i < productsId.Count; i++)
             {
                 if (productsQuantities.ContainsKey(productsId[i]))
@@ -123,7 +119,7 @@ namespace MealsOrderingApplication.Services.Repositories
                                 .Where(p => p.OrderDetailsId == orderDetails.Id)
                                 .Include(p => p.Product)
                                 .Select(p => new { p.Product, p.Quantity })
-                                .SumAsync(p => p.Product.Price * p.Quantity);
+                                .SumAsync(p => p.Product!.Price * p.Quantity);
         }
 
         public override async Task<Order> MapAddDtoToEntity<TDto>(TDto dto)

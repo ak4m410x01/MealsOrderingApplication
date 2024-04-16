@@ -7,11 +7,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.AdminValidation
 {
-    public class UpdateAdminValidation : BaseAdminValidation, IUpdateAdminValidation
+    public class UpdateAdminValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : BaseAdminValidation(unitOfWork, userManager), IUpdateAdminValidation
     {
-        public UpdateAdminValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager)
-        {
-        }
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
             if (dto is UpdateAdminDTO updateDto)

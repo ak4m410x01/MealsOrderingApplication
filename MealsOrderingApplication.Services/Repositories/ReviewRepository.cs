@@ -6,12 +6,8 @@ using MealsOrderingApplication.Domain.Interfaces;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class ReviewRepository : BaseRepository<Review>, IReviewRepository
+    public class ReviewRepository(ApplicationDbContext context) : BaseRepository<Review>(context), IReviewRepository
     {
-        public ReviewRepository(ApplicationDbContext context) : base(context)
-        {
-        }
-
         public override async Task<Review> MapAddDtoToEntity<TDto>(TDto dto)
         {
             if (dto is AddReviewDTO addDto)
