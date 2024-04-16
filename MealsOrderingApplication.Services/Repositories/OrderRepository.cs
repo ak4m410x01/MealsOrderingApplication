@@ -24,7 +24,7 @@ namespace MealsOrderingApplication.Services.Repositories
 
                 await AddProductOrderDetailsAsync(orderDetails, addDto.ProductsId, addDto.Quantities);
 
-                // Get Total Price for order products
+                // Add Total Price for order products
                 orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
                 await _context.SaveChangesAsync();
 
@@ -32,6 +32,37 @@ namespace MealsOrderingApplication.Services.Repositories
             }
 
             throw new ArgumentException("Invalid DTO type. Expected AddOrderDTO.");
+        }
+
+        public override async Task<Order> UpdateAsync<TDto>(Order entity, TDto dto)
+        {
+            if (dto is UpdateOrderDTO updateDto)
+            {
+                // Update Order Info
+                entity = await MapUpdateDtoToEntity<TDto>(entity, dto);
+
+                if (updateDto.ProductsId is not null)
+                {
+                    // Retrieve OrderDetails if is null throw NullReferenceException
+                    OrderDetails? orderDetails = await _context.OrderDetails
+                                    .SingleOrDefaultAsync(o => o.OrderId == entity.Id) ??
+                                    throw new NullReferenceException(nameof(orderDetails));
+
+                    IQueryable<ProductOrderDetails> productOrderDetails = _context.ProductOrderDetails.Where(p => p.OrderDetailsId == orderDetails.Id).AsQueryable();
+                    _context.ProductOrderDetails.RemoveRange(productOrderDetails);
+
+                    // Update Product Order Details
+                    await AddProductOrderDetailsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities);
+
+                    // Update Total Price for order products
+                    orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
+                }
+
+                await _context.SaveChangesAsync();
+
+                return await Task.FromResult(entity);
+            }
+            throw new ArgumentException("Invalid DTO type. Expected UpdateOrderDTO.");
         }
 
         protected virtual async Task<Order> AddOrderAsync(Order order)
@@ -53,21 +84,10 @@ namespace MealsOrderingApplication.Services.Repositories
         protected virtual async Task AddProductOrderDetailsAsync(OrderDetails orderDetails, List<int> productsId, List<int> quantities)
         {
             // Compine Products and Quantities
-            Dictionary<int, int> ProductsQuantities = new Dictionary<int, int>();
-            for (int i = 0; i < productsId.Count; i++)
-            {
-                if (ProductsQuantities.ContainsKey(productsId[i]))
-                {
-                    ProductsQuantities[productsId[i]] += quantities[i];
-                }
-                else
-                {
-                    ProductsQuantities.Add(productsId[i], quantities[i]);
-                }
-            }
+            Dictionary<int, int> productsQuantities = CompineProductsQuantities(productsId, quantities);
 
             // Add Product Order Details Info in Product Order Details Table
-            foreach (var item in ProductsQuantities)
+            foreach (var item in productsQuantities)
             {
                 await _context.ProductOrderDetails
                         .AddAsync(new ProductOrderDetails()
@@ -80,6 +100,23 @@ namespace MealsOrderingApplication.Services.Repositories
             await _context.SaveChangesAsync();
         }
 
+        protected virtual Dictionary<int, int> CompineProductsQuantities(List<int> productsId, List<int> quantities)
+        {
+            // Compine Products and Quantities
+            Dictionary<int, int> productsQuantities = new Dictionary<int, int>();
+            for (int i = 0; i < productsId.Count; i++)
+            {
+                if (productsQuantities.ContainsKey(productsId[i]))
+                {
+                    productsQuantities[productsId[i]] += quantities[i];
+                }
+                else
+                {
+                    productsQuantities.Add(productsId[i], quantities[i]);
+                }
+            }
+            return productsQuantities;
+        }
         protected virtual async Task<double> GetTotalPriceAsync(OrderDetails orderDetails)
         {
             return await _context.ProductOrderDetails
@@ -102,9 +139,16 @@ namespace MealsOrderingApplication.Services.Repositories
             throw new ArgumentException("Invalid DTO type. Expected AddOrderDTO.");
         }
 
-        public override Task<Order> MapUpdateDtoToEntity<TDto>(Order entity, TDto dto)
+        public override async Task<Order> MapUpdateDtoToEntity<TDto>(Order entity, TDto dto)
         {
-            throw new NotImplementedException();
+            if (dto is UpdateOrderDTO updateDto)
+            {
+                if (updateDto.Description is not null)
+                    entity.Description = updateDto.Description;
+
+                return await Task.FromResult(entity);
+            }
+            throw new ArgumentException("Invalid DTO type. Expected UpdateOrderDTO.");
         }
     }
 }

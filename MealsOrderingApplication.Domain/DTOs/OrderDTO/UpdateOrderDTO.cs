@@ -1,4 +1,5 @@
 ﻿using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using System.ComponentModel.DataAnnotations;
 
 namespace MealsOrderingApplication.Domain.DTOs.OrderDTO
 {

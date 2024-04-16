@@ -7,9 +7,6 @@ namespace MealsOrderingApplication.Domain.DTOs.OrderDTO
         // Order Table
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "The CustomerId field is required.")]
-        public string CustomerId { get; set; } = default!;
-
         [Required(ErrorMessage = "The Quantities List field is required.")]
         public List<int> Quantities { get; set; } = default!;
 
