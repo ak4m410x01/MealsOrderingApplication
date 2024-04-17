@@ -2,6 +2,6 @@
 {
     public interface IBaseProductValidation : IBaseValidation
     {
-        Task<bool> IsCategoryExists(int categoryId);
+        Task<bool> IsCategoryExistsAsync(int categoryId);
     }
 }

@@ -2,7 +2,7 @@
 {
     public interface IBaseApplicationUserValidation : IBaseValidation
     {
-        Task<bool> IsEmailExists(string email);
-        Task<bool> IsUsernameExists(string username);
+        Task<bool> IsEmailExistsAsync(string email);
+        Task<bool> IsUsernameExistsAsync(string username);
     }
 }

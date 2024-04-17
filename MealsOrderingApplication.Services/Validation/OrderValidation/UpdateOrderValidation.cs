@@ -25,7 +25,7 @@ namespace MealsOrderingApplication.Services.Validation.OrderValidation
                         if (updateDto.ProductsId[i] <= 0)
                             return $"ProductId must be greater than 0.";
 
-                        if (!(await IsProductExists(updateDto.ProductsId[i])))
+                        if (!(await IsProductExistsAsync(updateDto.ProductsId[i])))
                             return $"No Products found with this Id = {updateDto.ProductsId[i]}";
                     }
 

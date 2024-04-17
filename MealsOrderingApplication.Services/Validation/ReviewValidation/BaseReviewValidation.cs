@@ -7,12 +7,12 @@ namespace MealsOrderingApplication.Services.Validation.ReviewValidation
     {
         protected readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<bool> IsProductExists(int productId)
+        public async Task<bool> IsProductExistsAsync(int productId)
         {
             return ((await _unitOfWork.Products.GetByIdAsync(productId)) is not null);
         }
 
-        public async Task<bool> IsCustomerExists(string customerId)
+        public async Task<bool> IsCustomerExistsAsync(string customerId)
         {
             return ((await _unitOfWork.Customers.GetByIdAsync(customerId)) is not null);
         }

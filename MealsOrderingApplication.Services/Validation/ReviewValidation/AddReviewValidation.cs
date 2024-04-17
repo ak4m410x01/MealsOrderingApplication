@@ -11,10 +11,10 @@ namespace MealsOrderingApplication.Services.Validation.ReviewValidation
         {
             if (dto is AddReviewDTO addDto)
             {
-                if (!(await IsProductExists(addDto.ProductId)))
+                if (!(await IsProductExistsAsync(addDto.ProductId)))
                     return "Invalid ProductId";
 
-                if (!(await IsCustomerExists(addDto.CustomerId)))
+                if (!(await IsCustomerExistsAsync(addDto.CustomerId)))
                     return "Invalid CustomerId";
 
                 return string.Empty;

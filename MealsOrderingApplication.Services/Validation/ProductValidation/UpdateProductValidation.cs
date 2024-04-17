@@ -11,7 +11,7 @@ namespace MealsOrderingApplication.Services.Validation.ProductValidation
         {
             if (dto is UpdateProductDTO updateDto)
             {
-                if ((updateDto.CategoryId is not null) && (!(await IsCategoryExists(updateDto.CategoryId ?? default))))
+                if ((updateDto.CategoryId is not null) && (!(await IsCategoryExistsAsync(updateDto.CategoryId ?? default))))
                     return "Invalid Category Id";
 
                 return string.Empty;

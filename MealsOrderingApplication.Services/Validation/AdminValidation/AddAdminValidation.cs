@@ -13,10 +13,10 @@ namespace MealsOrderingApplication.Services.Validation.AdminValidation
         {
             if (dto is AddAdminDTO addDto)
             {
-                if (await IsEmailExists(addDto.Email))
+                if (await IsEmailExistsAsync(addDto.Email))
                     return "Email is Already Exists!";
 
-                if (await IsUsernameExists(addDto.Username))
+                if (await IsUsernameExistsAsync(addDto.Username))
                     return "Username is Already Exists!";
 
                 return string.Empty;

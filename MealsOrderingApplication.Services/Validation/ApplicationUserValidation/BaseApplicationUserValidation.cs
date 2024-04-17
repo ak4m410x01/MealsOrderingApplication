@@ -10,12 +10,12 @@ namespace MealsOrderingApplication.Services.Validation.ApplicationUserValidation
         protected readonly IUnitOfWork _unitOfWork = unitOfWork;
         protected readonly UserManager<ApplicationUser> _userManager = userManager;
 
-        public async Task<bool> IsEmailExists(string email)
+        public async Task<bool> IsEmailExistsAsync(string email)
         {
             return (await _userManager.FindByEmailAsync(email)) is not null;
         }
 
-        public async Task<bool> IsUsernameExists(string username)
+        public async Task<bool> IsUsernameExistsAsync(string username)
         {
             return (await _userManager.FindByNameAsync(username)) is not null;
         }

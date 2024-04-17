@@ -13,10 +13,10 @@ namespace MealsOrderingApplication.Services.Validation.AdminValidation
         {
             if (dto is UpdateAdminDTO updateDto)
             {
-                if ((updateDto.Email is not null) && (await IsEmailExists(updateDto.Email)))
+                if ((updateDto.Email is not null) && (await IsEmailExistsAsync(updateDto.Email)))
                     return "Email is Already Exists!";
 
-                if ((updateDto.Username is not null) && (await IsUsernameExists(updateDto.Username)))
+                if ((updateDto.Username is not null) && (await IsUsernameExistsAsync(updateDto.Username)))
                     return "Username is Already Exists!";
 
                 return string.Empty;

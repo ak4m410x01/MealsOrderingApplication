@@ -7,7 +7,7 @@ namespace MealsOrderingApplication.Services.Validation.ProductValidation
     {
         protected readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<bool> IsCategoryExists(int categoryId)
+        public async Task<bool> IsCategoryExistsAsync(int categoryId)
         {
             return (await _unitOfWork.Categories.GetByIdAsync(categoryId)) is not null;
         }

@@ -11,7 +11,7 @@ namespace DrinksOrderingApplication.Services.Validation.DrinkValidation
         {
             if (dto is AddDrinkDTO addDto)
             {
-                if (!(await IsCategoryExists(addDto.CategoryId)))
+                if (!(await IsCategoryExistsAsync(addDto.CategoryId)))
                     return "Invalid Category Id";
 
                 return string.Empty;
