@@ -10,18 +10,11 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace MealsOrderingApplication.Services.Services
 {
-    public class AuthenticationService : IAuthenticationService
+    public class AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt, IAddCustomerValidation addCustomerValidation) : IAuthenticationService
     {
-        public AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt, IAddCustomerValidation addCustomerValidation)
-        {
-            _userManager = userManager;
-            _jwt = jwt;
-            _addCustomerValidation = addCustomerValidation;
-        }
-
-        protected readonly UserManager<ApplicationUser> _userManager;
-        protected readonly JWTToken _jwt;
-        protected readonly IAddCustomerValidation _addCustomerValidation;
+        protected readonly UserManager<ApplicationUser> _userManager = userManager;
+        protected readonly JWTToken _jwt = jwt;
+        protected readonly IAddCustomerValidation _addCustomerValidation = addCustomerValidation;
 
         public async Task<AuthanticationModel> RegisterAsync(RegisterDTO model)
         {
@@ -37,7 +30,7 @@ namespace MealsOrderingApplication.Services.Services
             if (!string.IsNullOrEmpty(message))
                 return new AuthanticationModel() { Message = message };
 
-            Customer user = new Customer()
+            Customer user = new()
             {
                 FirstName = model.FirstName,
                 LastName = model.LastName,
@@ -50,7 +43,7 @@ namespace MealsOrderingApplication.Services.Services
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                AuthanticationModel authModel = new AuthanticationModel();
+                AuthanticationModel authModel = new();
                 foreach (var error in result.Errors)
                 {
                     authModel.Message += error;
@@ -75,7 +68,7 @@ namespace MealsOrderingApplication.Services.Services
         {
             ApplicationUser? user = await _userManager.FindByEmailAsync(model.Email);
             if (user is null || !(await _userManager.CheckPasswordAsync(user, model.Password)))
-                return new AuthanticationModel() { Message = "Username or Passwrod is Incorrect!" };
+                return new AuthanticationModel() { Message = "Email or Passwrod is Incorrect!" };
 
             JwtSecurityToken jwtSecurityToken = await _jwt.GenerateAccessTokenAsync(user);
 

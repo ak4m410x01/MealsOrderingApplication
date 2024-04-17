@@ -2,6 +2,7 @@
 using MealsOrderingApplication.Services.Helpers;
 using MealsOrderingApplication.Services.IServices;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,10 +10,11 @@ using System.Text;
 
 namespace MealsOrderingApplication.Services.Services
 {
-    public class JWTToken(UserManager<ApplicationUser> userManager, JWTConfig jwt) : IJWTToken
+    public class JWTToken(UserManager<ApplicationUser> userManager, IOptions<JWTConfig> jwt) : IJWTToken
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly JWTConfig _jwt = jwt;
+        private readonly JWTConfig _jwt = jwt.Value;
+
         public virtual async Task<JwtSecurityToken> GenerateAccessTokenAsync(ApplicationUser user)
         {
             IList<Claim> userClaims = await _userManager.GetClaimsAsync(user);
@@ -32,10 +34,11 @@ namespace MealsOrderingApplication.Services.Services
                 .. roleClaims,
             ];
 
-            // TODO: Fix Null Reference Exception Here
-            string key = _jwt.Key is null ? "sz8eI7OdHBrjrIo8j9nTW/rQyO1OvY0pAQ2wDKQZw/0=" : _jwt.Key;
+            string jwtKey = _jwt.Key ?? throw new NullReferenceException("Missing JWT Key...!!");
+
             SigningCredentials signingCredentials = new(new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(key)), SecurityAlgorithms.HmacSha256);
+                                Encoding.UTF8.GetBytes(jwtKey)),
+                                SecurityAlgorithms.HmacSha256);
 
             return new JwtSecurityToken(
                 issuer: _jwt.Issuer,
