@@ -25,6 +25,7 @@ namespace MealsOrderingApplication.Services.Services
                 Email = model.Email,
                 Username = model.Username,
                 Password = model.Password,
+                ConfirmPassword = model.ConfirmPassword,
             });
 
             if (!string.IsNullOrEmpty(message))
@@ -36,7 +37,7 @@ namespace MealsOrderingApplication.Services.Services
                 LastName = model.LastName,
                 Email = model.Email,
                 UserName = model.Username,
-                PhoneNumber = model.Phone,
+                PhoneNumber = model.PhoneNumber,
                 Location = model.Location,
             };
 

@@ -10,16 +10,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class ApplicationUserRepository : BaseRepository<ApplicationUser>, IApplicationUserRepository<ApplicationUser>
+    public class ApplicationUserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAddApplicationUserValidation addApplicationUserValidation) : BaseRepository<ApplicationUser>(context), IApplicationUserRepository<ApplicationUser>
     {
-        public ApplicationUserRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAddApplicationUserValidation addApplicationUserValidation) : base(context)
-        {
-            _userManager = userManager;
-            _addApplicationUserValidation = addApplicationUserValidation;
-        }
-
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IAddApplicationUserValidation _addApplicationUserValidation;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly IAddApplicationUserValidation _addApplicationUserValidation = addApplicationUserValidation;
 
         public override async Task<ApplicationUser> MapAddDtoToEntity<TDto>(TDto dto)
         {

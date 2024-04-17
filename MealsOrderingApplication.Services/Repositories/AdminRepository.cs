@@ -9,14 +9,9 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class AdminRepository : BaseRepository<Admin>, IAdminRepository
+    public class AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : BaseRepository<Admin>(context), IAdminRepository
     {
-        public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : base(context)
-        {
-            _userManager = userManager;
-        }
-
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly UserManager<ApplicationUser> _userManager = userManager;
 
 
         public override async Task<Admin> MapAddDtoToEntity<TDto>(TDto dto)
@@ -88,7 +83,7 @@ namespace MealsOrderingApplication.Services.Repositories
                     }
                     return authModel;
                 }
-                await _userManager.AddToRolesAsync(user, new[] { "User", "Admin" });
+                await _userManager.AddToRolesAsync(user, ["User", "Admin"]);
 
 
                 return await Task.FromResult(new AuthanticationModel()

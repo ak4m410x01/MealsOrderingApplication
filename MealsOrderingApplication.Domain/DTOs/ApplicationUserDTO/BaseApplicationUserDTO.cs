@@ -15,7 +15,9 @@ namespace MealsOrderingApplication.Domain.DTOs.ApplicationUserDTO
 
         [Required(ErrorMessage = "The Email field is required.")]
         [StringLength(256, ErrorMessage = "The Email field must be less than 256 characters.")]
+        [RegularExpression("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$", ErrorMessage = "Must be a valid email")]
         public string Email { get; set; } = default!;
+
 
         [Required(ErrorMessage = "The Username field is required.")]
         [StringLength(256, ErrorMessage = "The Username field must be less than 256 characters.")]
