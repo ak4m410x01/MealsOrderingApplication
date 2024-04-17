@@ -9,9 +9,9 @@ namespace MealsOrderingApplication.Services.Validation.MealValidation
     {
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
-            if (dto is UpdateMealDTO addDto)
+            if (dto is UpdateMealDTO updateDto)
             {
-                if ((addDto.CategoryId is not null) && ((await _unitOfWork.Categories.GetByIdAsync(addDto.CategoryId)) is null))
+                if ((updateDto.CategoryId is not null) && (!(await IsCategoryExists(updateDto.CategoryId ?? default))))
                     return "Invalid Category Id";
 
                 return string.Empty;

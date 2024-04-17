@@ -3,12 +3,13 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 
 namespace MealsOrderingApplication.Services.Validation.OrderValidation
 {
-    public class BaseOrderValidation : IBaseOrderValidation
+    public class BaseOrderValidation(IUnitOfWork unitOfWork) : IBaseOrderValidation
     {
-        public BaseOrderValidation(IUnitOfWork unitOfWork)
+        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+        public async Task<bool> IsProductExists(int productId)
         {
-            _unitOfWork = unitOfWork;
+            return ((await _unitOfWork.Products.GetByIdAsync(productId)) is not null);
         }
-        protected readonly IUnitOfWork _unitOfWork;
     }
 }

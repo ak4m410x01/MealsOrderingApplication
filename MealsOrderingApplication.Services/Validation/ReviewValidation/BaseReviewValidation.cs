@@ -3,12 +3,18 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.ReviewValidation;
 
 namespace MealsOrderingApplication.Services.Validation.ReviewValidation
 {
-    public class BaseReviewValidation : IBaseReviewValidation
+    public class BaseReviewValidation(IUnitOfWork unitOfWork) : IBaseReviewValidation
     {
-        public BaseReviewValidation(IUnitOfWork unitOfWork)
+        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+        public async Task<bool> IsProductExists(int productId)
         {
-            _unitOfWork = unitOfWork;
+            return ((await _unitOfWork.Products.GetByIdAsync(productId)) is not null);
         }
-        protected readonly IUnitOfWork _unitOfWork;
+
+        public async Task<bool> IsCustomerExists(string customerId)
+        {
+            return ((await _unitOfWork.Customers.GetByIdAsync(customerId)) is not null);
+        }
     }
 }

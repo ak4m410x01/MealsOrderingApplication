@@ -7,19 +7,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.CustomerValidation
 {
-    public class UpdateCustomerValidation : BaseCustomerValidation, IUpdateCustomerValidation
+    public class UpdateCustomerValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : BaseCustomerValidation(unitOfWork, userManager), IUpdateCustomerValidation
     {
-        public UpdateCustomerValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager)
-        {
-        }
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
             if (dto is UpdateCustomerDTO updateDto)
             {
-                if ((updateDto.Email is not null) && ((await _userManager.FindByEmailAsync(updateDto.Email)) is not null))
+                if ((updateDto.Email is not null) && (await IsEmailExists(updateDto.Email)))
                     return "Email is Already Exists!";
 
-                if ((updateDto.Username is not null) && ((await _userManager.FindByNameAsync(updateDto.Username)) is not null))
+                if ((updateDto.Username is not null) && (await IsUsernameExists(updateDto.Username)))
                     return "Username is Already Exists!";
 
                 return string.Empty;

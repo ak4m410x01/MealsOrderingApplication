@@ -23,7 +23,7 @@ namespace MealsOrderingApplication.Services.Validation.OrderValidation
                     if (addDto.ProductsId[i] <= 0)
                         return $"ProductId must be greater than 0.";
 
-                    if ((await _unitOfWork.Products.GetByIdAsync(addDto.ProductsId[i])) is null)
+                    if (!(await IsProductExists(addDto.ProductsId[i])))
                         return $"No Products found with this Id = {addDto.ProductsId[i]}";
                 }
 

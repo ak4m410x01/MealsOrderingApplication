@@ -6,17 +6,13 @@ using MealsOrderingApplication.Services.Validation.ProductValidation;
 
 namespace MealsOrderingApplication.Services.Validation.MealValidation
 {
-    public class AddMealValidation : BaseProductValidation, IAddMealValidation
+    public class AddMealValidation(IUnitOfWork unitOfWork) : BaseProductValidation(unitOfWork), IAddMealValidation
     {
-        public AddMealValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
-
         public async Task<string> AddIsValidAsync<TDto>(TDto dto) where TDto : IAddDTO
         {
             if (dto is AddMealDTO addDto)
             {
-                if ((await _unitOfWork.Categories.GetByIdAsync(addDto.CategoryId)) is null)
+                if (!(await IsCategoryExists(addDto.CategoryId)))
                     return "Invalid Category Id";
 
                 return string.Empty;

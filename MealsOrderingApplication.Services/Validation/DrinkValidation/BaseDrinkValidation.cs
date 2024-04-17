@@ -1,14 +1,10 @@
 ﻿using DrinksOrderingApplication.Domain.Interfaces.Validations.DrinkValidation;
 using MealsOrderingApplication.Domain;
+using MealsOrderingApplication.Services.Validation.ProductValidation;
 
 namespace DrinksOrderingApplication.Services.Validation.DrinkValidation
 {
-    public class BaseDrinkValidation : IBaseDrinkValidation
+    public class BaseDrinkValidation(IUnitOfWork unitOfWork) : BaseProductValidation(unitOfWork), IBaseDrinkValidation
     {
-        public BaseDrinkValidation(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-        protected readonly IUnitOfWork _unitOfWork;
     }
 }

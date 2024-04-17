@@ -5,17 +5,13 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.ProductValidation;
 
 namespace MealsOrderingApplication.Services.Validation.ProductValidation
 {
-    public class AddProductValidation : BaseProductValidation, IAddProductValidation
+    public class AddProductValidation(IUnitOfWork unitOfWork) : BaseProductValidation(unitOfWork), IAddProductValidation
     {
-        public AddProductValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
-        {
-        }
-
         public async Task<string> AddIsValidAsync<TDto>(TDto dto) where TDto : IAddDTO
         {
             if (dto is AddProductDTO addDto)
             {
-                if ((await _unitOfWork.Categories.GetByIdAsync(addDto.CategoryId)) is null)
+                if (!(await IsCategoryExists(addDto.CategoryId)))
                     return "Invalid Category Id";
 
                 return string.Empty;

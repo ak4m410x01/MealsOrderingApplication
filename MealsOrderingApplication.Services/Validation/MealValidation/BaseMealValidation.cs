@@ -1,14 +1,10 @@
 ﻿using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.Interfaces.Validations.MealValidation;
+using MealsOrderingApplication.Services.Validation.ProductValidation;
 
 namespace MealsOrderingApplication.Services.Validation.MealValidation
 {
-    public class BaseMealValidation : IBaseMealValidation
+    public class BaseMealValidation(IUnitOfWork unitOfWork) : BaseProductValidation(unitOfWork), IBaseMealValidation
     {
-        public BaseMealValidation(IUnitOfWork unitOfWork)
-        {
-            _unitOfWork = unitOfWork;
-        }
-        protected readonly IUnitOfWork _unitOfWork;
     }
 }
