@@ -27,8 +27,8 @@ using MealsOrderingApplication.Services.Validation.ReviewValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace MealsOrderingApplication.API
@@ -128,7 +128,44 @@ namespace MealsOrderingApplication.API
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(
+                swagger =>
+                {
+                    swagger.SwaggerDoc("v1", new OpenApiInfo()
+                    {
+                        Title = "Meals Ordering API",
+                        Version = "v1",
+                        Description = "The Meals Ordering Application simplifies meal, food, and drink ordering online. Built with .NET Core Web API and SQL Server, it offers a user-friendly experience for customers and efficient management for businesses, transforming the dining experience."
+                    });
+
+                    swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                    {
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer",
+                        BearerFormat = "JWT",
+                        In = ParameterLocation.Header,
+                        Description = "Enter 'Bearer' [space] and then your valid token in text input."
+                    });
+
+                    swagger.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                    {
+                        {
+                            new OpenApiSecurityScheme()
+                            {
+                                Reference = new OpenApiReference()
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[]{
+
+                            }
+                        }
+                    });
+                }
+            );
 
             var app = builder.Build();
 
@@ -138,6 +175,8 @@ namespace MealsOrderingApplication.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
