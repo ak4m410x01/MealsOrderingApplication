@@ -62,7 +62,8 @@ namespace MealsOrderingApplication.Services.Services
                 UserId = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                AccessTokenExpiration = jwtSecurityToken.ValidTo,
             });
         }
         public async Task<AuthanticationModel> LoginAsync(LoginDTO model)
@@ -79,7 +80,8 @@ namespace MealsOrderingApplication.Services.Services
                 UserId = user.Id,
                 Email = user.Email,
                 UserName = user.UserName,
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                AccessTokenExpiration = jwtSecurityToken.ValidTo,
             });
         }
     }

@@ -34,10 +34,9 @@ namespace MealsOrderingApplication.API.Controllers
 
             return Ok(new
             {
-                UserId = authModel.UserId,
-                Email = authModel.Email,
                 Username = authModel.UserName,
                 Token = authModel.AccessToken,
+                Expiration = authModel.AccessTokenExpiration,
             });
         }
 
@@ -54,6 +53,7 @@ namespace MealsOrderingApplication.API.Controllers
             return Ok(new
             {
                 Token = authModel.AccessToken,
+                Expiration = authModel.AccessTokenExpiration,
             });
         }
     }
