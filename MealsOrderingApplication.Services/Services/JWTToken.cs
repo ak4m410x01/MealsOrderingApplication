@@ -26,7 +26,6 @@ namespace MealsOrderingApplication.Services.Services
 
             List<Claim> claims =
             [
-                new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim("uid", user.Id),
                 new Claim("Email", user.Email!),
