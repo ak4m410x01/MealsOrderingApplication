@@ -16,7 +16,7 @@ namespace MealsOrderingApplication.Services.Services.Response
 
             Result = result.PaginatePage(pageNumber, pageSize);
 
-            Uri baseUrl = new Uri($"{request.Scheme}://{request.Host}{request.Path}");
+            Uri baseUrl = new($"{request.Scheme}://{request.Host}{request.Path}");
 
             FirstPage = new Uri($"{baseUrl}?pageNumber=1&pageSize={PageSize}");
             LastPage = new Uri($"{baseUrl}?pageNumber={TotalPages}&pageSize={PageSize}");

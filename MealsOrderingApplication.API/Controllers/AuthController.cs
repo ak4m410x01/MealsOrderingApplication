@@ -2,8 +2,8 @@
 using MealsOrderingApplication.Domain.DTOs.AuthanticationDTO;
 using MealsOrderingApplication.Domain.Models;
 using MealsOrderingApplication.Services.IServices;
+using MealsOrderingApplication.Services.Services.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
 
 namespace MealsOrderingApplication.API.Controllers
 {
@@ -28,7 +28,11 @@ namespace MealsOrderingApplication.API.Controllers
 
             AuthanticationModel authModel = await _authService.RegisterAsync(model);
             if (!authModel.IsAuthenticated)
-                return BadRequest(new { error = authModel.Message });
+                return BadRequest(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = authModel.Message,
+                });
 
             await _unitOfWork.CompleteAsync();
 
@@ -48,7 +52,11 @@ namespace MealsOrderingApplication.API.Controllers
 
             AuthanticationModel authModel = await _authService.LoginAsync(model);
             if (!authModel.IsAuthenticated)
-                return BadRequest(new { error = authModel.Message });
+                return BadRequest(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = authModel.Message,
+                });
 
             return Ok(new
             {

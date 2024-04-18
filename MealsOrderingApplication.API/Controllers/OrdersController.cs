@@ -1,7 +1,9 @@
 ﻿using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.DTOs.OrderDTO;
+using MealsOrderingApplication.Domain.DTOs.ReviewDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
+using MealsOrderingApplication.Services.Services.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,29 +13,33 @@ namespace MealsOrderingApplication.API.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        public OrdersController(IUnitOfWork unitOfWork, IAddOrderValidation addOrderValidation, IUpdateOrderValidation updateOrderValidation)
+        public OrdersController(IUnitOfWork unitOfWork, IAddOrderValidation addOrderValidation, IUpdateOrderValidation updateOrderValidation, IHttpContextAccessor httpContextAccessor)
         {
             _unitOfWork = unitOfWork;
             _addOrderValidation = addOrderValidation;
             _updateOrderValidation = updateOrderValidation;
+            _httpContextAccessor = httpContextAccessor;
         }
 
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IAddOrderValidation _addOrderValidation;
-        private readonly IUpdateOrderValidation _updateOrderValidation;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddOrderValidation _addOrderValidation;
+        protected readonly IUpdateOrderValidation _updateOrderValidation;
+        protected readonly IHttpContextAccessor _httpContextAccessor;
+
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync()
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
         {
             IQueryable<Order> orders = await _unitOfWork.Orders.GetAllAsync();
-
-            return Ok(orders.Select(o => new
-            {
-                o.Id,
-                o.Description,
-                o.CustomerId,
-                o.CreatedAt,
-            }));
+            return Ok(new PagedResponse<OrderDTODetails>(
+                orders.Select(o => new OrderDTODetails
+                {
+                    Id = o.Id,
+                    Description = o.Description,
+                    CustomerId = o.CustomerId,
+                    CreatedAt = o.CreatedAt,
+                }),
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
         }
 
         [HttpPost]
@@ -44,26 +50,26 @@ namespace MealsOrderingApplication.API.Controllers
 
             Customer? customer = await _unitOfWork.Customers.GetByIdAsync(dto.CustomerId);
             if (customer is null)
-                return NotFound(new { error = "No Customers found with this Id" });
+                return BadRequest(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = $"No Customers found with this Id = {dto.CustomerId}"
+                });
 
             string message = await _addOrderValidation.AddIsValidAsync(dto);
             if (!string.IsNullOrEmpty(message))
-            {
-                return BadRequest(new { error = message });
-            }
+                return BadRequest(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = message,
+                });
 
             try
             {
                 Order order = await _unitOfWork.Orders.AddAsync(dto);
                 await _unitOfWork.CompleteAsync();
 
-                return Ok(new
-                {
-                    order.Id,
-                    order.Description,
-                    order.CustomerId,
-                    order.CreatedAt,
-                });
+                return Ok(OrderDtoDetailsResponse(order));
             }
             catch (ArgumentException)
             {
@@ -76,16 +82,13 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Order? order = await _unitOfWork.Orders.GetByIdAsync(id);
             if (order is null)
-                return NotFound(new { error = "No Orders found with this Id" });
+                return NotFound(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = $"No Orders found with this Id = {id}"
+                });
 
-
-            return Ok(new
-            {
-                order.Id,
-                order.Description,
-                order.CustomerId,
-                order.CreatedAt,
-            });
+            return Ok(OrderDtoDetailsResponse(order));
         }
 
         [HttpPut("{id}")]
@@ -93,29 +96,29 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Order? order = await _unitOfWork.Orders.GetByIdAsync(id);
             if (order is null)
-                return NotFound(new { error = "No Orders found with this Id" });
+                return NotFound(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = $"No Orders found with this Id = {id}"
+                });
 
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             string message = await _updateOrderValidation.UpdateIsValidAsync(dto);
             if (!string.IsNullOrEmpty(message))
-            {
-                return BadRequest(new { error = message });
-            }
+                return BadRequest(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = message,
+                });
 
             try
             {
                 await _unitOfWork.Orders.UpdateAsync(order, dto);
                 await _unitOfWork.CompleteAsync();
 
-                return Ok(new
-                {
-                    order.Id,
-                    order.Description,
-                    order.CustomerId,
-                    order.CreatedAt,
-                });
+                return Ok(OrderDtoDetailsResponse(order));
             }
             catch (NullReferenceException)
             {
@@ -128,12 +131,28 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Order? order = await _unitOfWork.Orders.GetByIdAsync(id);
             if (order is null)
-                return NotFound(new { error = "No Orders found with this Id" });
+                return NotFound(new Response<object>()
+                {
+                    Succeeded = false,
+                    Message = $"No Orders found with this Id = {id}"
+                });
 
             await _unitOfWork.Orders.DeleteAsync(order);
             await _unitOfWork.CompleteAsync();
 
             return NoContent();
+        }
+
+        protected virtual Response<OrderDTODetails> OrderDtoDetailsResponse(Order order)
+        {
+            return new Response<OrderDTODetails>(
+                new OrderDTODetails()
+                {
+                    Id = order.Id,
+                    Description = order.Description,
+                    CustomerId = order.CustomerId,
+                    CreatedAt = order.CreatedAt,
+                });
         }
     }
 }
