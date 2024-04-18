@@ -28,6 +28,13 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
                 new IdentityRole()
                 {
                     Id = Guid.NewGuid().ToString(),
+                    Name = "Customer",
+                    NormalizedName = "Customer".ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                },
+                new IdentityRole()
+                {
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Admin",
                     NormalizedName = "Admin".ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),

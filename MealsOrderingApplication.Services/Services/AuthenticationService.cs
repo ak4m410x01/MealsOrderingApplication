@@ -52,7 +52,7 @@ namespace MealsOrderingApplication.Services.Services
                 return authModel;
             }
 
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRolesAsync(user, ["User", "Customer"]);
 
             JwtSecurityToken jwtSecurityToken = await _jwt.GenerateAccessTokenAsync(user);
 

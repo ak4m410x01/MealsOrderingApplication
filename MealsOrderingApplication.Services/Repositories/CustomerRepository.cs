@@ -97,7 +97,7 @@ namespace MealsOrderingApplication.Services.Repositories
                     }
                     return authModel;
                 }
-                await _userManager.AddToRoleAsync(user, "User");
+                await _userManager.AddToRolesAsync(user, ["User", "Customer"]);
 
 
                 return await Task.FromResult(new AuthanticationModel()
