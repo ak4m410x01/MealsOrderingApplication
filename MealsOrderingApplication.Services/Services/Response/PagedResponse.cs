@@ -23,6 +23,10 @@ namespace MealsOrderingApplication.Services.Services.Response
 
             PreviousPage = pageNumber <= 1 ? null : new Uri($"{baseUrl}?pageNumber={PageNumber - 1}&pageSize={PageSize}");
             NextPage = pageNumber >= TotalPages ? null : new Uri($"{baseUrl}?pageNumber={PageNumber + 1}&pageSize={PageSize}");
+
+            Succeeded = true;
+            Message = string.Empty;
+            Errors = null;
         }
 
         public int PageNumber { get; set; }
