@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.AdminValidation
 {
-    public class BaseAdminValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) :
-        BaseApplicationUserValidation(unitOfWork, userManager),
-        IBaseAdminValidation
+    public class BaseAdminValidation : BaseApplicationUserValidation, IBaseAdminValidation
     {
+        public BaseAdminValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager)
+        {
+        }
     }
 }

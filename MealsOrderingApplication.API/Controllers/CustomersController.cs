@@ -11,12 +11,20 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation, IAddCustomerValidation addCustomerValidation) : ControllerBase
+    public class CustomersController : ControllerBase
     {
-        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
-        protected readonly UserManager<ApplicationUser> _userManager = userManager;
-        protected readonly IAddCustomerValidation _addCustomerValidation = addCustomerValidation;
-        protected readonly IUpdateCustomerValidation _updateCustomerValidation = updateCustomerValidation;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly UserManager<ApplicationUser> _userManager;
+        protected readonly IAddCustomerValidation _addCustomerValidation;
+        protected readonly IUpdateCustomerValidation _updateCustomerValidation;
+
+        public CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation, IAddCustomerValidation addCustomerValidation)
+        {
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
+            _addCustomerValidation = addCustomerValidation;
+            _updateCustomerValidation = updateCustomerValidation;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()

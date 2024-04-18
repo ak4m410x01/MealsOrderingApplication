@@ -5,8 +5,12 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 
 namespace MealsOrderingApplication.Services.Validation.OrderValidation
 {
-    public class UpdateOrderValidation(IUnitOfWork unitOfWork) : BaseOrderValidation(unitOfWork), IUpdateOrderValidation
+    public class UpdateOrderValidation : BaseOrderValidation, IUpdateOrderValidation
     {
+        public UpdateOrderValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
+        }
+
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
             if (dto is UpdateOrderDTO updateDto)

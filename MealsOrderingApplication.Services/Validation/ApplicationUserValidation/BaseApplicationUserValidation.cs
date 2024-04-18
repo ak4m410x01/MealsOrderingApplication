@@ -5,10 +5,16 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.ApplicationUserValidation
 {
-    public class BaseApplicationUserValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : IBaseApplicationUserValidation
+    public class BaseApplicationUserValidation : IBaseApplicationUserValidation
     {
-        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
-        protected readonly UserManager<ApplicationUser> _userManager = userManager;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly UserManager<ApplicationUser> _userManager;
+
+        public BaseApplicationUserValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
+        {
+            _unitOfWork = unitOfWork;
+            _userManager = userManager;
+        }
 
         public async Task<bool> IsEmailExistsAsync(string email)
         {

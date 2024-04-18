@@ -9,9 +9,14 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : BaseRepository<Admin>(context), IAdminRepository
+    public class AdminRepository : BaseRepository<Admin>, IAdminRepository
     {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public AdminRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : base(context)
+        {
+            _userManager = userManager;
+        }
 
         public override async Task<Admin> MapAddDtoToEntity<TDto>(TDto dto)
         {

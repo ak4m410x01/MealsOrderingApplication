@@ -3,9 +3,14 @@ using MealsOrderingApplication.Domain.Interfaces.Validations.ProductValidation;
 
 namespace MealsOrderingApplication.Services.Validation.ProductValidation
 {
-    public class BaseProductValidation(IUnitOfWork unitOfWork) : IBaseProductValidation
+    public class BaseProductValidation : IBaseProductValidation
     {
-        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+        protected readonly IUnitOfWork _unitOfWork;
+
+        public BaseProductValidation(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
 
         public async Task<bool> IsCategoryExistsAsync(int categoryId)
         {

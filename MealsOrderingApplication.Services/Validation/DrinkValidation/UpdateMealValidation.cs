@@ -5,8 +5,12 @@ using MealsOrderingApplication.Domain.Interfaces.DTOs;
 
 namespace DrinksOrderingApplication.Services.Validation.DrinkValidation
 {
-    public class UpdateDrinkValidation(IUnitOfWork unitOfWork) : BaseDrinkValidation(unitOfWork), IUpdateDrinkValidation
+    public class UpdateDrinkValidation : BaseDrinkValidation, IUpdateDrinkValidation
     {
+        public UpdateDrinkValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
+        }
+
         public async Task<string> UpdateIsValidAsync<TDto>(TDto dto) where TDto : IUpdateDTO
         {
             if (dto is UpdateDrinkDTO updateDto)

@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Validation.CustomerValidation
 {
-    public class BaseCustomerValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) :
-        BaseApplicationUserValidation(unitOfWork, userManager),
+    public class BaseCustomerValidation :
+        BaseApplicationUserValidation,
         IBaseCustomerValidation
     {
+        public BaseCustomerValidation(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager) : base(unitOfWork, userManager)
+        {
+        }
     }
 }

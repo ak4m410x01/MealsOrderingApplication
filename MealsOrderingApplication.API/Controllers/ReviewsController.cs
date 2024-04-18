@@ -8,11 +8,18 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ReviewsController(IUnitOfWork unitOfWork, IAddReviewValidation addReviewValidation, IUpdateReviewValidation updateReviewValidation) : ControllerBase
+    public class ReviewsController : ControllerBase
     {
-        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
-        protected readonly IAddReviewValidation _addReviewValidation = addReviewValidation;
-        protected readonly IUpdateReviewValidation _updateReviewValidation = updateReviewValidation;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddReviewValidation _addReviewValidation;
+        protected readonly IUpdateReviewValidation _updateReviewValidation;
+
+        public ReviewsController(IUnitOfWork unitOfWork, IAddReviewValidation addReviewValidation, IUpdateReviewValidation updateReviewValidation)
+        {
+            _unitOfWork = unitOfWork;
+            _addReviewValidation = addReviewValidation;
+            _updateReviewValidation = updateReviewValidation;
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetAllAsync()

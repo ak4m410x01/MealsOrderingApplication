@@ -6,8 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class OrderRepository(ApplicationDbContext context) : BaseRepository<Order>(context), IOrderRepository
+    public class OrderRepository : BaseRepository<Order>, IOrderRepository
     {
+        public OrderRepository(ApplicationDbContext context) : base(context)
+        {
+        }
+
         public override async Task<Order> AddAsync<TDto>(TDto dto)
         {
             if (dto is AddOrderDTO addDto)

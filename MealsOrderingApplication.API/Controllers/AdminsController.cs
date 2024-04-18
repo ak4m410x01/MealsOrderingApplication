@@ -9,11 +9,18 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation, IAddAdminValidation addAdminValidation) : ControllerBase
+    public class AdminsController : ControllerBase
     {
-        protected readonly IUnitOfWork _unitOfWork = unitOfWork;
-        protected readonly IAddAdminValidation _addAdminValidation = addAdminValidation;
-        protected readonly IUpdateAdminValidation _updateAdminValidation = updateAdminValidation;
+        protected readonly IUnitOfWork _unitOfWork;
+        protected readonly IAddAdminValidation _addAdminValidation;
+        protected readonly IUpdateAdminValidation _updateAdminValidation;
+
+        public AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation, IAddAdminValidation addAdminValidation)
+        {
+            _unitOfWork = unitOfWork;
+            _addAdminValidation = addAdminValidation;
+            _updateAdminValidation = updateAdminValidation;
+        }
 
         // Retrieve All Admins
         [HttpGet]

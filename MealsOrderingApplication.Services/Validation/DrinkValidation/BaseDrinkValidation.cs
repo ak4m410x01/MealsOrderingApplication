@@ -4,7 +4,10 @@ using MealsOrderingApplication.Services.Validation.ProductValidation;
 
 namespace DrinksOrderingApplication.Services.Validation.DrinkValidation
 {
-    public class BaseDrinkValidation(IUnitOfWork unitOfWork) : BaseProductValidation(unitOfWork), IBaseDrinkValidation
+    public class BaseDrinkValidation : BaseProductValidation, IBaseDrinkValidation
     {
+        public BaseDrinkValidation(IUnitOfWork unitOfWork) : base(unitOfWork)
+        {
+        }
     }
 }

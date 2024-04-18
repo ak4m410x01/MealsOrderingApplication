@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace MealsOrderingApplication.Data.DbContext
 {
-    public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<ApplicationUser>(options)
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
 
         // Add Db Sets
@@ -21,7 +21,9 @@ namespace MealsOrderingApplication.Data.DbContext
         public DbSet<ProductOrderDetails> ProductOrderDetails { get; set; }
         public DbSet<Review> Reviews { get; set; }
 
-
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

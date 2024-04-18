@@ -10,11 +10,18 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace MealsOrderingApplication.Services.Services
 {
-    public class AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt, IAddCustomerValidation addCustomerValidation) : IAuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
-        protected readonly UserManager<ApplicationUser> _userManager = userManager;
-        protected readonly JWTToken _jwt = jwt;
-        protected readonly IAddCustomerValidation _addCustomerValidation = addCustomerValidation;
+        protected readonly UserManager<ApplicationUser> _userManager;
+        protected readonly JWTToken _jwt;
+        protected readonly IAddCustomerValidation _addCustomerValidation;
+
+        public AuthenticationService(UserManager<ApplicationUser> userManager, JWTToken jwt, IAddCustomerValidation addCustomerValidation)
+        {
+            _userManager = userManager;
+            _jwt = jwt;
+            _addCustomerValidation = addCustomerValidation;
+        }
 
         public async Task<AuthanticationModel> RegisterAsync(RegisterDTO model)
         {

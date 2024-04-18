@@ -10,10 +10,16 @@ using System.Text;
 
 namespace MealsOrderingApplication.Services.Services
 {
-    public class JWTToken(UserManager<ApplicationUser> userManager, IOptions<JWTConfig> jwt) : IJWTToken
+    public class JWTToken : IJWTToken
     {
-        private readonly UserManager<ApplicationUser> _userManager = userManager;
-        private readonly JWTConfig _jwt = jwt.Value;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly JWTConfig _jwt;
+
+        public JWTToken(UserManager<ApplicationUser> userManager, IOptions<JWTConfig> jwt)
+        {
+            _userManager = userManager;
+            _jwt = jwt.Value;
+        }
 
         public virtual async Task<JwtSecurityToken> GenerateAccessTokenAsync(ApplicationUser user)
         {
