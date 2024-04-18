@@ -1,19 +1,18 @@
 ﻿using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.DTOs.AdminDTO;
 using MealsOrderingApplication.Domain.Entities;
-using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces.Validations.AdminValidation;
 using MealsOrderingApplication.Domain.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation) : ControllerBase
+    public class AdminsController(IUnitOfWork unitOfWork, IUpdateAdminValidation updateAdminValidation, IAddAdminValidation addAdminValidation) : ControllerBase
     {
         protected readonly IUnitOfWork _unitOfWork = unitOfWork;
+        protected readonly IAddAdminValidation _addAdminValidation = addAdminValidation;
         protected readonly IUpdateAdminValidation _updateAdminValidation = updateAdminValidation;
 
         // Retrieve All Admins
@@ -39,6 +38,10 @@ namespace MealsOrderingApplication.API.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+
+            string message = await _addAdminValidation.AddIsValidAsync(dto);
+            if (string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
 
             AuthanticationModel authModel = await _unitOfWork.Admins.CreateAsync(dto);
             if (!authModel.IsAuthenticated)

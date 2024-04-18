@@ -77,15 +77,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 if ((await _userManager.FindByNameAsync(userDto.Username)) is not null)
                     return new AuthanticationModel() { Message = "Username is Already Exists!" };
 
-                Customer user = new Customer
-                {
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    Email = userDto.Email,
-                    UserName = userDto.Username,
-                    PhoneNumber = userDto.PhoneNumber,
-                    Location = userDto.Location,
-                };
+                Customer user = await MapAddDtoToEntity(dto);
 
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)

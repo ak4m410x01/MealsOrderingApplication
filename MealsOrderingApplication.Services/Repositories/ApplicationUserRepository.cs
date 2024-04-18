@@ -1,6 +1,5 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
 using MealsOrderingApplication.Domain.DTOs.ApplicationUserDTO;
-using MealsOrderingApplication.Domain.DTOs.CustomerDTO;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
@@ -63,13 +62,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 if (!string.IsNullOrEmpty(message))
                     return new AuthanticationModel() { Message = message };
 
-                ApplicationUser user = new()
-                {
-                    FirstName = userDto.FirstName,
-                    LastName = userDto.LastName,
-                    Email = userDto.Email,
-                    UserName = userDto.Username,
-                };
+                ApplicationUser user = await MapAddDtoToEntity(dto);
 
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)

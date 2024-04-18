@@ -11,10 +11,11 @@ namespace MealsOrderingApplication.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation) : ControllerBase
+    public class CustomersController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager, IUpdateCustomerValidation updateCustomerValidation, IAddCustomerValidation addCustomerValidation) : ControllerBase
     {
         protected readonly IUnitOfWork _unitOfWork = unitOfWork;
         protected readonly UserManager<ApplicationUser> _userManager = userManager;
+        protected readonly IAddCustomerValidation _addCustomerValidation = addCustomerValidation;
         protected readonly IUpdateCustomerValidation _updateCustomerValidation = updateCustomerValidation;
 
         [HttpGet]
@@ -35,12 +36,16 @@ namespace MealsOrderingApplication.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAsync(AddCustomerDTO model)
+        public async Task<IActionResult> AddAsync(AddCustomerDTO dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            AuthanticationModel authModel = await _unitOfWork.Customers.CreateAsync(model);
+            string message = await _addCustomerValidation.AddIsValidAsync(dto);
+            if (string.IsNullOrEmpty(message))
+                return BadRequest(new { error = message });
+
+            AuthanticationModel authModel = await _unitOfWork.Customers.CreateAsync(dto);
             if (!authModel.IsAuthenticated)
                 return BadRequest(new { error = authModel.Message });
 

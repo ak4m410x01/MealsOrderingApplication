@@ -13,7 +13,6 @@ namespace MealsOrderingApplication.Services.Repositories
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
 
-
         public override async Task<Admin> MapAddDtoToEntity<TDto>(TDto dto)
         {
             if (dto is AddAdminDTO addDto)
@@ -59,19 +58,7 @@ namespace MealsOrderingApplication.Services.Repositories
         {
             if (dto is AddAdminDTO userDto)
             {
-                if ((await _userManager.FindByEmailAsync(userDto.Email ?? "")) is not null)
-                    return new AuthanticationModel() { Message = "Email is Already Exists!" };
-
-                if ((await _userManager.FindByNameAsync(userDto.Username ?? "")) is not null)
-                    return new AuthanticationModel() { Message = "Username is Already Exists!" };
-
-                Admin user = new()
-                {
-                    FirstName = userDto.FirstName ?? "",
-                    LastName = userDto.LastName ?? "",
-                    Email = userDto.Email,
-                    UserName = userDto.Username,
-                };
+                Admin user = await MapAddDtoToEntity(dto);
 
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)
