@@ -82,7 +82,7 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Admin? admin = await _unitOfWork.Admins.GetByIdAsync(id);
             if (admin is null)
-                return BadRequest(new Response<object>()
+                return NotFound(new Response<object>()
                 {
                     Succeeded = false,
                     Message = $"No Admins found with this Id = {id}"
@@ -98,7 +98,7 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Admin? admin = await _unitOfWork.Admins.GetByIdAsync(id);
             if (admin is null)
-                return BadRequest(new Response<object>()
+                return NotFound(new Response<object>()
                 {
                     Succeeded = false,
                     Message = $"No Admins found with this Id = {id}"
@@ -128,7 +128,7 @@ namespace MealsOrderingApplication.API.Controllers
         {
             Admin? admin = await _unitOfWork.Admins.GetByIdAsync(id);
             if (admin is null)
-                return BadRequest(new Response<object>()
+                return NotFound(new Response<object>()
                 {
                     Succeeded = false,
                     Message = $"No Admins found with this Id = {id}"

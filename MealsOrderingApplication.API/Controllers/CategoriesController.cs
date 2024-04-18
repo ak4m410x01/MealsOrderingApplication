@@ -96,7 +96,7 @@ namespace MealsOrderingApplication.API.Controllers
             return NoContent();
         }
 
-        protected Response<CategoryDTODetails> CategoryDtoDetailsResponse(Category category)
+        protected virtual Response<CategoryDTODetails> CategoryDtoDetailsResponse(Category category)
         {
             return new Response<CategoryDTODetails>(
                 new CategoryDTODetails()
