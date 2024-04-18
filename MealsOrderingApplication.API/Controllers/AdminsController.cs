@@ -47,7 +47,7 @@ namespace MealsOrderingApplication.API.Controllers
                 return BadRequest(ModelState);
 
             string message = await _addAdminValidation.AddIsValidAsync(dto);
-            if (string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
                 return BadRequest(new { error = message });
 
             AuthanticationModel authModel = await _unitOfWork.Admins.CreateAsync(dto);
@@ -95,7 +95,7 @@ namespace MealsOrderingApplication.API.Controllers
                 return BadRequest(ModelState);
 
             string message = await _updateAdminValidation.UpdateIsValidAsync(dto);
-            if (string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
                 return BadRequest(new { error = message });
 
             await _unitOfWork.Admins.UpdateAsync(admin, dto);

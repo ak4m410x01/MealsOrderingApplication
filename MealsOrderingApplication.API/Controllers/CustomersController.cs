@@ -50,7 +50,7 @@ namespace MealsOrderingApplication.API.Controllers
                 return BadRequest(ModelState);
 
             string message = await _addCustomerValidation.AddIsValidAsync(dto);
-            if (string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
                 return BadRequest(new { error = message });
 
             AuthanticationModel authModel = await _unitOfWork.Customers.CreateAsync(dto);
@@ -97,7 +97,7 @@ namespace MealsOrderingApplication.API.Controllers
                 return BadRequest(ModelState);
 
             string message = await _updateCustomerValidation.UpdateIsValidAsync(dto);
-            if (string.IsNullOrEmpty(message))
+            if (!string.IsNullOrEmpty(message))
                 return BadRequest(new { error = message });
 
             await _unitOfWork.Customers.UpdateAsync(customer, dto);
