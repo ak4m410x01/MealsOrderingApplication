@@ -25,7 +25,15 @@ namespace MealsOrderingApplication.API.Controllers
         public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
         {
             IQueryable<Category> categories = await _unitOfWork.Categories.GetAllAsync();
-            return Ok(new PagedResponse<Category>(categories, _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+
+            return Ok(new PagedResponse<CategoryDTODetails>(
+                categories.Select(c => new CategoryDTODetails
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                }),
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
         }
 
         [HttpPost]
