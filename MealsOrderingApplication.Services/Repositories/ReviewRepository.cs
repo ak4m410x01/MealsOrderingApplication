@@ -1,12 +1,12 @@
 ﻿using MealsOrderingApplication.Data.DbContext;
-using MealsOrderingApplication.Domain.DTOs.ProductDTO;
 using MealsOrderingApplication.Domain.DTOs.ReviewDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Reviews;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class ReviewRepository : BaseRepository<Review>, IReviewRepository
+    public class ReviewRepository : BaseRepository<Review>, IReviewRepository, IReviewsFilter
     {
         public ReviewRepository(ApplicationDbContext context) : base(context)
         {
@@ -41,6 +41,21 @@ namespace MealsOrderingApplication.Services.Repositories
                 return await Task.FromResult(entity);
             }
             throw new ArgumentException("Invalid DTO type. Expected UpdateReviewDTO.");
+        }
+
+        public virtual async Task<IQueryable<Review>> FilterByCustomerAsync(IQueryable<Review> reviews, string customerId)
+        {
+            return await Task.FromResult(reviews.Where(r => r.CustomerId == customerId));
+        }
+
+        public virtual async Task<IQueryable<Review>> FilterByStarsAsync(IQueryable<Review> reviews, int stars)
+        {
+            return await Task.FromResult(reviews.Where(r => r.Stars == stars));
+        }
+
+        public virtual async Task<IQueryable<Review>> FilterByProductAsync(IQueryable<Review> reviews, int productId)
+        {
+            return await Task.FromResult(reviews.Where(r => r.ProductId == productId));
         }
     }
 }

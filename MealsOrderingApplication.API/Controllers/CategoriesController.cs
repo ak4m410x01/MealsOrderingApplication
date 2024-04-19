@@ -22,18 +22,25 @@ namespace MealsOrderingApplication.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? name = null)
         {
             IQueryable<Category> categories = await _unitOfWork.Categories.GetAllAsync();
 
-            return Ok(new PagedResponse<CategoryDTODetails>(
-                categories.Select(c => new CategoryDTODetails
-                {
-                    Id = c.Id,
-                    Name = c.Name,
-                    Description = c.Description,
-                }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+            if (name is not null)
+                categories = await _unitOfWork.Categories.FilterByNameAsync(categories, name);
+
+
+            PagedResponse<CategoryDTODetails> response = new(
+                    categories.Select(c => new CategoryDTODetails
+                    {
+                        Id = c.Id,
+                        Name = c.Name,
+                        Description = c.Description,
+                    }),
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize
+                );
+
+            return Ok(response);
         }
 
         [HttpPost]

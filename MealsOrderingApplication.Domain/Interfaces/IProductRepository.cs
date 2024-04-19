@@ -3,7 +3,7 @@ using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Products;
 
 namespace MealsOrderingApplication.Domain.Interfaces
 {
-    public interface IProductRepository : IBaseRepository<Product>, IProductFilter<Product>
+    public interface IProductRepository : IBaseRepository<Product>, IProductsFilter<Product>
     {
     }
 }

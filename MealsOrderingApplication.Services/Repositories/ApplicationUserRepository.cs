@@ -3,13 +3,14 @@ using MealsOrderingApplication.Domain.DTOs.ApplicationUserDTO;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.ApplicationUsers;
 using MealsOrderingApplication.Domain.Interfaces.Validations.ApplicationUserValidation;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class ApplicationUserRepository : BaseRepository<ApplicationUser>, IApplicationUserRepository<ApplicationUser>
+    public class ApplicationUserRepository : BaseRepository<ApplicationUser>, IApplicationUserRepository<ApplicationUser>, IApplicationUserFilter<ApplicationUser>
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAddApplicationUserValidation _addApplicationUserValidation;
@@ -92,6 +93,21 @@ namespace MealsOrderingApplication.Services.Repositories
                 });
             }
             throw new ArgumentException("Invalid DTO type. Expected AddApplicationUserDTO.");
+        }
+
+        public virtual async Task<IQueryable<ApplicationUser>> FilterByEmailAsync(IQueryable<ApplicationUser> users, string email)
+        {
+            return await Task.FromResult(users.Where(u => u.Email == email));
+        }
+
+        public virtual async Task<IQueryable<ApplicationUser>> FilterByUsernameAsync(IQueryable<ApplicationUser> users, string username)
+        {
+            return await Task.FromResult(users.Where(u => u.UserName == username));
+        }
+
+        public virtual async Task<IQueryable<ApplicationUser>> FilterByNameAsync(IQueryable<ApplicationUser> users, string name)
+        {
+            return await Task.FromResult(users.Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name)));
         }
     }
 }

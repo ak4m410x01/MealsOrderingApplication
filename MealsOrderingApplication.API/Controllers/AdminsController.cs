@@ -27,19 +27,31 @@ namespace MealsOrderingApplication.API.Controllers
 
         // Retrieve All Admins
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? email = null, string? username = null, string? name = null)
         {
             IQueryable<Admin> admins = await _unitOfWork.Admins.GetAllAsync();
-            return Ok(new PagedResponse<AdminDTODetails>(
-                admins.Select(c => new AdminDTODetails
-                {
-                    Id = c.Id,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    Email = c.Email!,
-                    Username = c.UserName!
-                }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+
+            if (email is not null)
+                admins = await _unitOfWork.Admins.FilterByEmailAsync(admins, email);
+
+            if (username is not null)
+                admins = await _unitOfWork.Admins.FilterByUsernameAsync(admins, username);
+
+            if (name is not null)
+                admins = await _unitOfWork.Admins.FilterByNameAsync(admins, name);
+
+            PagedResponse<AdminDTODetails> response = new(
+                    admins.Select(c => new AdminDTODetails
+                    {
+                        Id = c.Id,
+                        FirstName = c.FirstName,
+                        LastName = c.LastName,
+                        Email = c.Email!,
+                        Username = c.UserName!
+                    }),
+            _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
 

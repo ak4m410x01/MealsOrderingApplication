@@ -3,10 +3,11 @@ using MealsOrderingApplication.Domain.DTOs.OrderDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Orders;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class OrderRepository : BaseRepository<Order>, IOrderRepository
+    public class OrderRepository : BaseRepository<Order>, IOrderRepository, IOrdersFilter
     {
         public OrderRepository(ApplicationDbContext context) : base(context)
         {
@@ -149,6 +150,11 @@ namespace MealsOrderingApplication.Services.Repositories
                 return await Task.FromResult(entity);
             }
             throw new ArgumentException("Invalid DTO type. Expected UpdateOrderDTO.");
+        }
+
+        public virtual async Task<IQueryable<Order>> FilterByCustomerAsync(IQueryable<Order> orders, string customerId)
+        {
+            return await Task.FromResult(orders.Where(o => o.CustomerId == customerId));
         }
     }
 }

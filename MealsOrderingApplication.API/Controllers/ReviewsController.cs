@@ -27,10 +27,20 @@ namespace MealsOrderingApplication.API.Controllers
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, int? stars = null, int? productId = null, string? customerId = null)
         {
             IQueryable<Review> reviews = await _unitOfWork.Reviews.GetAllAsync();
-            return Ok(new PagedResponse<ReviewDTODetails>(
+
+            if (stars is not null)
+                reviews = await _unitOfWork.Reviews.FilterByStarsAsync(reviews, stars ?? default);
+
+            if (productId is not null)
+                reviews = await _unitOfWork.Reviews.FilterByProductAsync(reviews, productId ?? default);
+
+            if (customerId is not null)
+                reviews = await _unitOfWork.Reviews.FilterByCustomerAsync(reviews, customerId ?? "");
+
+            PagedResponse<ReviewDTODetails> response = new(
                 reviews.Select(r => new ReviewDTODetails
                 {
                     Id = r.Id,
@@ -39,7 +49,9 @@ namespace MealsOrderingApplication.API.Controllers
                     ProductId = r.ProductId,
                     CustomerId = r.CustomerId,
                 }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
         [HttpPost]

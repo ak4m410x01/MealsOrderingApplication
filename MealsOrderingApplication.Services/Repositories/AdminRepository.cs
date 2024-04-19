@@ -4,12 +4,13 @@ using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Admins;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class AdminRepository : BaseRepository<Admin>, IAdminRepository
+    public class AdminRepository : BaseRepository<Admin>, IAdminRepository, IAdminFilter
     {
         private readonly UserManager<ApplicationUser> _userManager;
 
@@ -88,6 +89,20 @@ namespace MealsOrderingApplication.Services.Repositories
             }
             throw new ArgumentException("Invalid DTO type. Expected AddAdminDTO.");
         }
-    }
 
+        public virtual async Task<IQueryable<Admin>> FilterByEmailAsync(IQueryable<Admin> admins, string email)
+        {
+            return await Task.FromResult(admins.Where(u => u.Email == email));
+        }
+
+        public virtual async Task<IQueryable<Admin>> FilterByUsernameAsync(IQueryable<Admin> admins, string username)
+        {
+            return await Task.FromResult(admins.Where(u => u.UserName == username));
+        }
+
+        public virtual async Task<IQueryable<Admin>> FilterByNameAsync(IQueryable<Admin> admins, string name)
+        {
+            return await Task.FromResult(admins.Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name)));
+        }
+    }
 }

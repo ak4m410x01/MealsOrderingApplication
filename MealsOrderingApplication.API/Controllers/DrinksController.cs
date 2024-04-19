@@ -25,7 +25,7 @@ namespace MealsOrderingApplication.API.Controllers
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? name = null, int? categoryId = null, int? minPrice = null, int? maxPrice = null)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? name = null, int? categoryId = null, double? minPrice = null, double? maxPrice = null)
         {
             IQueryable<Drink> drinks = await _unitOfWork.Drinks.GetAllAsync();
 
@@ -36,7 +36,7 @@ namespace MealsOrderingApplication.API.Controllers
                 drinks = await _unitOfWork.Drinks.FilterByCategoryAsync(drinks, categoryId ?? default);
 
             if (minPrice is not null || maxPrice is not null)
-                drinks = await _unitOfWork.Drinks.FilterByPriceAsync(drinks, minPrice, maxPrice);
+                drinks = await _unitOfWork.Drinks.FilterByPriceAsync(drinks, minPrice ?? 0, maxPrice ?? double.MaxValue);
 
             PagedResponse<DrinkDTODetails> response = new(
                 drinks.Select(d => new DrinkDTODetails

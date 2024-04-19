@@ -1,10 +1,8 @@
 ﻿using MealsOrderingApplication.Domain;
 using MealsOrderingApplication.Domain.DTOs.OrderDTO;
-using MealsOrderingApplication.Domain.DTOs.ReviewDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 using MealsOrderingApplication.Services.Services.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MealsOrderingApplication.API.Controllers
@@ -28,10 +26,14 @@ namespace MealsOrderingApplication.API.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? customerId = null)
         {
             IQueryable<Order> orders = await _unitOfWork.Orders.GetAllAsync();
-            return Ok(new PagedResponse<OrderDTODetails>(
+
+            if (customerId is not null)
+                orders = await _unitOfWork.Orders.FilterByCustomerAsync(orders, customerId);
+
+            PagedResponse<OrderDTODetails> response = new(
                 orders.Select(o => new OrderDTODetails
                 {
                     Id = o.Id,
@@ -39,7 +41,9 @@ namespace MealsOrderingApplication.API.Controllers
                     CustomerId = o.CustomerId,
                     CreatedAt = o.CreatedAt,
                 }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
         [HttpPost]

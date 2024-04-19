@@ -2,10 +2,11 @@
 using MealsOrderingApplication.Domain.DTOs.CategoryDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Categories;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository
+    public class CategoryRepository : BaseRepository<Category>, ICategoryRepository, ICategoriesFilter
     {
         public CategoryRepository(ApplicationDbContext context) : base(context)
         {
@@ -38,6 +39,11 @@ namespace MealsOrderingApplication.Services.Repositories
                 return await Task.FromResult(entity);
             }
             throw new ArgumentException("Invalid DTO type. Expected UpdateCategoryDTO.");
+        }
+
+        public async Task<IQueryable<Category>> FilterByNameAsync(IQueryable<Category> categories, string name)
+        {
+            return await Task.FromResult(categories.Where(c => c.Name.Contains(name)));
         }
     }
 }

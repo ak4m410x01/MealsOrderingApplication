@@ -6,7 +6,7 @@ using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Meals;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class MealRepository : BaseRepository<Meal>, IMealRepository, IMealFilter
+    public class MealRepository : BaseRepository<Meal>, IMealRepository, IMealsFilter
     {
         public MealRepository(ApplicationDbContext context) : base(context)
         {
@@ -59,14 +59,14 @@ namespace MealsOrderingApplication.Services.Repositories
             return await Task.FromResult(meals.Where(p => p.CategoryId == categoryId));
         }
 
-        public virtual async Task<IQueryable<Meal>> FilterByPriceAsync(IQueryable<Meal> meals, double? minPrice, double? maxPrice)
+        public virtual async Task<IQueryable<Meal>> FilterByPriceAsync(IQueryable<Meal> meals, double minPrice = 0, double maxPrice = double.MaxValue)
         {
-            if (minPrice is null || minPrice <= 0) minPrice = 1;
-            if (maxPrice is null) maxPrice = double.MaxValue;
+            minPrice = minPrice < 0 ? 0 : minPrice;
+            maxPrice = maxPrice < 0 ? double.MaxValue : maxPrice;
 
             if (minPrice > maxPrice)
             {
-                double? tmp = minPrice;
+                double tmp = minPrice;
                 maxPrice = minPrice;
                 minPrice = tmp;
             }

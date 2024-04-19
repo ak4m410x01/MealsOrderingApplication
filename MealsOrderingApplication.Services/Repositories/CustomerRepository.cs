@@ -5,12 +5,14 @@ using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.IdentityEntities;
 using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.DTOs;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Customers;
 using MealsOrderingApplication.Domain.Models;
 using Microsoft.AspNetCore.Identity;
+using System.Runtime.InteropServices;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
+    public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository, ICustomerFilter
     {
         public CustomerRepository(ApplicationDbContext context, UserManager<ApplicationUser> userManager) : base(context)
         {
@@ -82,7 +84,7 @@ namespace MealsOrderingApplication.Services.Repositories
                 IdentityResult result = await _userManager.CreateAsync(user, userDto.Password);
                 if (!result.Succeeded)
                 {
-                    AuthanticationModel authModel = new AuthanticationModel();
+                    AuthanticationModel authModel = new();
                     foreach (var error in result.Errors)
                     {
                         authModel.Message += error;
@@ -101,6 +103,21 @@ namespace MealsOrderingApplication.Services.Repositories
                 });
             }
             throw new ArgumentException("Invalid DTO type. Expected AddCustomerDTO.");
+        }
+
+        public virtual async Task<IQueryable<Customer>> FilterByEmailAsync(IQueryable<Customer> custuomers, string email)
+        {
+            return await Task.FromResult(custuomers.Where(u => u.Email == email));
+        }
+
+        public virtual async Task<IQueryable<Customer>> FilterByUsernameAsync(IQueryable<Customer> custuomers, string username)
+        {
+            return await Task.FromResult(custuomers.Where(u => u.UserName == username));
+        }
+
+        public virtual async Task<IQueryable<Customer>> FilterByNameAsync(IQueryable<Customer> custuomers, string name)
+        {
+            return await Task.FromResult(custuomers.Where(u => u.FirstName.Contains(name) || u.LastName.Contains(name)));
         }
     }
 }

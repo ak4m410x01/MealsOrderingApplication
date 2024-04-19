@@ -30,21 +30,33 @@ namespace MealsOrderingApplication.API.Controllers
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? email = null, string? username = null, string? name = null)
         {
             IQueryable<Customer> customers = await _unitOfWork.Customers.GetAllAsync();
-            return Ok(new PagedResponse<CustomerDTODetails>(
-                customers.Select(c => new CustomerDTODetails
-                {
-                    Id = c.Id,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName,
-                    Email = c.Email ?? "",
-                    Username = c.UserName ?? "",
-                    PhoneNumber = c.PhoneNumber ?? "",
-                    Location = c.Location
-                }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+
+            if (email is not null)
+                customers = await _unitOfWork.Customers.FilterByEmailAsync(customers, email);
+
+            if (username is not null)
+                customers = await _unitOfWork.Customers.FilterByUsernameAsync(customers, username);
+
+            if (name is not null)
+                customers = await _unitOfWork.Customers.FilterByNameAsync(customers, name);
+
+            PagedResponse<CustomerDTODetails> response = new(
+                     customers.Select(c => new CustomerDTODetails
+                     {
+                         Id = c.Id,
+                         FirstName = c.FirstName,
+                         LastName = c.LastName,
+                         Email = c.Email ?? "",
+                         Username = c.UserName ?? "",
+                         PhoneNumber = c.PhoneNumber ?? "",
+                         Location = c.Location
+                     }),
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
         [HttpPost]

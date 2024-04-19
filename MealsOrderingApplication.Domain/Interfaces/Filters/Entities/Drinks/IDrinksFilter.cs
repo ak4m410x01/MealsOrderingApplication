@@ -2,7 +2,7 @@
 using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Products;
 namespace MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Drinks
 {
-    public interface IDrinkFilter : IProductFilter<Drink>
+    public interface IDrinksFilter : IProductsFilter<Drink>
     {
     }
 }
