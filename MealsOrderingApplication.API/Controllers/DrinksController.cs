@@ -25,10 +25,20 @@ namespace MealsOrderingApplication.API.Controllers
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? name = null, int? categoryId = null, int? minPrice = null, int? maxPrice = null)
         {
             IQueryable<Drink> drinks = await _unitOfWork.Drinks.GetAllAsync();
-            return Ok(new PagedResponse<DrinkDTODetails>(
+
+            if (name is not null)
+                drinks = await _unitOfWork.Drinks.FilterByNameAsync(drinks, name);
+
+            if (categoryId is not null)
+                drinks = await _unitOfWork.Drinks.FilterByCategoryAsync(drinks, categoryId ?? default);
+
+            if (minPrice is not null || maxPrice is not null)
+                drinks = await _unitOfWork.Drinks.FilterByPriceAsync(drinks, minPrice, maxPrice);
+
+            PagedResponse<DrinkDTODetails> response = new(
                 drinks.Select(d => new DrinkDTODetails
                 {
                     Id = d.Id,
@@ -37,7 +47,9 @@ namespace MealsOrderingApplication.API.Controllers
                     Price = d.Price,
                     CategoryId = d.CategoryId,
                 }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
         [HttpPost]

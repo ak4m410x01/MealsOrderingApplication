@@ -25,19 +25,31 @@ namespace MealsOrderingApplication.API.Controllers
         protected readonly IHttpContextAccessor _httpContextAccessor;
 
         [HttpGet]
-        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<IActionResult> GetAllAsync(int pageNumber = 1, int pageSize = 10, string? name = null, int? categoryId = null, int? minPrice = null, int? maxPrice = null)
         {
             IQueryable<Meal> meals = await _unitOfWork.Meals.GetAllAsync();
-            return Ok(new PagedResponse<MealDTODetails>(
-                meals.Select(m => new MealDTODetails
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Description = m.Description,
-                    Price = m.Price,
-                    CategoryId = m.CategoryId,
-                }),
-                _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize));
+
+            if (name is not null)
+                meals = await _unitOfWork.Meals.FilterByNameAsync(meals, name);
+
+            if (categoryId is not null)
+                meals = await _unitOfWork.Meals.FilterByCategoryAsync(meals, categoryId ?? default);
+
+            if (minPrice is not null || maxPrice is not null)
+                meals = await _unitOfWork.Meals.FilterByPriceAsync(meals, minPrice, maxPrice);
+
+            PagedResponse<MealDTODetails> response = new(
+                           meals.Select(m => new MealDTODetails
+                           {
+                               Id = m.Id,
+                               Name = m.Name,
+                               Description = m.Description,
+                               Price = m.Price,
+                               CategoryId = m.CategoryId,
+                           }),
+                     _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
+
+            return Ok(response);
         }
 
         [HttpPost]

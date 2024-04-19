@@ -2,10 +2,11 @@
 using MealsOrderingApplication.Domain.DTOs.MealDTO;
 using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
+using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Meals;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
-    public class MealRepository : BaseRepository<Meal>, IMealRepository
+    public class MealRepository : BaseRepository<Meal>, IMealRepository, IMealFilter
     {
         public MealRepository(ApplicationDbContext context) : base(context)
         {
@@ -46,6 +47,31 @@ namespace MealsOrderingApplication.Services.Repositories
                 return await Task.FromResult(entity);
             }
             throw new ArgumentException("Invalid DTO type. Expected UpdateMealDTO.");
+        }
+
+        public virtual async Task<IQueryable<Meal>> FilterByNameAsync(IQueryable<Meal> meals, string name)
+        {
+            return await Task.FromResult(meals.Where(p => p.Name.Contains(name)));
+        }
+
+        public virtual async Task<IQueryable<Meal>> FilterByCategoryAsync(IQueryable<Meal> meals, int categoryId)
+        {
+            return await Task.FromResult(meals.Where(p => p.CategoryId == categoryId));
+        }
+
+        public virtual async Task<IQueryable<Meal>> FilterByPriceAsync(IQueryable<Meal> meals, double? minPrice, double? maxPrice)
+        {
+            if (minPrice is null || minPrice <= 0) minPrice = 1;
+            if (maxPrice is null) maxPrice = double.MaxValue;
+
+            if (minPrice > maxPrice)
+            {
+                double? tmp = minPrice;
+                maxPrice = minPrice;
+                minPrice = tmp;
+            }
+
+            return await Task.FromResult(meals.Where(p => p.Price >= minPrice && p.Price <= maxPrice));
         }
     }
 }
