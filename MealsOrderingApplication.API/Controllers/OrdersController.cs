@@ -79,7 +79,7 @@ namespace MealsOrderingApplication.API.Controllers
                 Order order = await _unitOfWork.Orders.AddAsync(dto);
                 await _unitOfWork.CompleteAsync();
 
-                return Ok(OrderDtoDetailsResponse(order));
+                return Created(nameof(GetByIdAsync), OrderDtoDetailsResponse(order));
             }
             catch (ArgumentException)
             {
