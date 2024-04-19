@@ -13,6 +13,15 @@ namespace MealsOrderingApplication.Services.Repositories
         {
         }
 
+        public override async Task<IQueryable<Order>> GetAllAsync()
+        {
+            IQueryable<Order> orders = await base.GetAllAsync();
+            orders = await Task.FromResult(_context.Orders
+                .Include(o => o.OrderDetails)
+                .AsQueryable());
+
+            return orders;
+        }
         public override async Task<Order> AddAsync<TDto>(TDto dto)
         {
             if (dto is AddOrderDTO addDto)
@@ -23,10 +32,11 @@ namespace MealsOrderingApplication.Services.Repositories
                 // Add Order Details Info in Order Details Table
                 OrderDetails orderDetails = await AddOrderDetailsAsync(order);
 
-                await AddProductOrderDetailsAsync(orderDetails, addDto.ProductsId, addDto.Quantities);
+                await AddOrderProductsAsync(orderDetails, addDto.ProductsId, addDto.Quantities);
 
                 // Add Total Price for order products
                 orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
+
                 await _context.SaveChangesAsync();
 
                 return await Task.FromResult(order);
@@ -35,6 +45,21 @@ namespace MealsOrderingApplication.Services.Repositories
             throw new ArgumentException("Invalid DTO type. Expected AddOrderDTO.");
         }
 
+        public override async Task<Order?> GetByIdAsync(object id)
+        {
+            Order? order = await base.GetByIdAsync(id);
+
+            if (order is not null)
+            {
+                await _context.Entry(order)
+                              .Reference(o => o.OrderDetails)
+                              .Query()
+                              .Include(p => p.Products)
+                              .LoadAsync();
+            }
+
+            return order;
+        }
         public override async Task<Order> UpdateAsync<TDto>(Order entity, TDto dto)
         {
             if (dto is UpdateOrderDTO updateDto)
@@ -49,11 +74,11 @@ namespace MealsOrderingApplication.Services.Repositories
                                     .SingleOrDefaultAsync(o => o.OrderId == entity.Id) ??
                                     throw new NullReferenceException(nameof(orderDetails));
 
-                    IQueryable<ProductOrderDetails> productOrderDetails = _context.ProductOrderDetails.Where(p => p.OrderDetailsId == orderDetails.Id).AsQueryable();
+                    IQueryable<OrderProducts> productOrderDetails = _context.ProductOrderDetails.Where(p => p.OrderDetailsId == orderDetails.OrderId).AsQueryable();
                     _context.ProductOrderDetails.RemoveRange(productOrderDetails);
 
                     // Update Product Order Details
-                    await AddProductOrderDetailsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities!);
+                    await AddOrderProductsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities!);
 
                     // Update Total Price for order products
                     orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
@@ -79,10 +104,9 @@ namespace MealsOrderingApplication.Services.Repositories
             OrderDetails orderDetails = new() { OrderId = order.Id, TotalPrice = 0 };
             await _context.OrderDetails.AddAsync(orderDetails);
             await _context.SaveChangesAsync();
-
             return orderDetails;
         }
-        protected virtual async Task AddProductOrderDetailsAsync(OrderDetails orderDetails, List<int> productsId, List<int> quantities)
+        protected virtual async Task AddOrderProductsAsync(OrderDetails orderDetails, List<int> productsId, List<int> quantities)
         {
             // Compine Products and Quantities
             Dictionary<int, int> productsQuantities = CompineProductsQuantities(productsId, quantities);
@@ -91,9 +115,9 @@ namespace MealsOrderingApplication.Services.Repositories
             foreach (var item in productsQuantities)
             {
                 await _context.ProductOrderDetails
-                        .AddAsync(new ProductOrderDetails()
+                        .AddAsync(new OrderProducts()
                         {
-                            OrderDetailsId = orderDetails.Id,
+                            OrderDetailsId = orderDetails.OrderId,
                             ProductId = item.Key,
                             Quantity = item.Value,
                         });
@@ -121,7 +145,7 @@ namespace MealsOrderingApplication.Services.Repositories
         protected virtual async Task<double> GetTotalPriceAsync(OrderDetails orderDetails)
         {
             return await _context.ProductOrderDetails
-                                .Where(p => p.OrderDetailsId == orderDetails.Id)
+                                .Where(p => p.OrderDetailsId == orderDetails.OrderId)
                                 .Include(p => p.Product)
                                 .Select(p => new { p.Product, p.Quantity })
                                 .SumAsync(p => p.Product!.Price * p.Quantity);

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MealsOrderingApplication.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240418112438_SeedCustomerRole")]
-    partial class SeedCustomerRole
+    [Migration("20240419174210_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,24 +75,33 @@ namespace MealsOrderingApplication.Data.Migrations
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.OrderDetails", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<double>("TotalPrice")
                         .HasColumnType("float");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId")
-                        .IsUnique();
+                    b.HasKey("OrderId");
 
                     b.ToTable("OrderDetails", "Product");
+                });
+
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.OrderProducts", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OrderDetailsId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("ProductId", "OrderDetailsId");
+
+                    b.HasIndex("OrderDetailsId");
+
+                    b.ToTable("OrderProducts", "Product");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
@@ -124,24 +133,6 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.ToTable("Products", "Product");
 
                     b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.ProductOrderDetails", b =>
-                {
-                    b.Property<int>("ProductId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderDetailsId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("ProductId", "OrderDetailsId");
-
-                    b.HasIndex("OrderDetailsId");
-
-                    b.ToTable("ProductOrderDetails", "Product");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Review", b =>
@@ -286,22 +277,22 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "6ffd29e7-3385-4fca-807d-e404146c1eca",
-                            ConcurrencyStamp = "8937dce7-dfdd-4308-9a97-5a40da530a39",
+                            Id = "eadf9de8-1a69-4602-a814-b10e5f127eed",
+                            ConcurrencyStamp = "46d1e609-b704-4b47-ad08-790ce6146dbc",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = "d83537d2-340e-41c4-90e8-19d5605a427c",
-                            ConcurrencyStamp = "0eac1b6c-21ad-4541-8334-e2f12322cfba",
+                            Id = "44d511e7-983a-4433-bc46-ec59dca5a9be",
+                            ConcurrencyStamp = "ffe9075f-8462-4360-82b6-edeac334234f",
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = "8d23caaa-cc97-4ffe-924c-1761849f6877",
-                            ConcurrencyStamp = "9524bcc9-290a-4eed-8415-3e80382e3925",
+                            Id = "f2e67fe0-0e12-453b-98b4-a074b98ad3f8",
+                            ConcurrencyStamp = "6c05109b-688d-4ae8-9207-7c1ba8cd0edb",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
@@ -468,6 +459,25 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.OrderProducts", b =>
+                {
+                    b.HasOne("MealsOrderingApplication.Domain.Entities.OrderDetails", "OrderDetails")
+                        .WithMany("Products")
+                        .HasForeignKey("OrderDetailsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MealsOrderingApplication.Domain.Entities.Product", "Product")
+                        .WithMany("Orders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
                 {
                     b.HasOne("MealsOrderingApplication.Domain.Entities.Category", "Category")
@@ -477,25 +487,6 @@ namespace MealsOrderingApplication.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.ProductOrderDetails", b =>
-                {
-                    b.HasOne("MealsOrderingApplication.Domain.Entities.OrderDetails", "OrderDetails")
-                        .WithMany()
-                        .HasForeignKey("OrderDetailsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MealsOrderingApplication.Domain.Entities.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("OrderDetails");
-
-                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Review", b =>
@@ -614,8 +605,15 @@ namespace MealsOrderingApplication.Data.Migrations
                     b.Navigation("OrderDetails");
                 });
 
+            modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.OrderDetails", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("MealsOrderingApplication.Domain.Entities.Product", b =>
                 {
+                    b.Navigation("Orders");
+
                     b.Navigation("Reviews");
                 });
 

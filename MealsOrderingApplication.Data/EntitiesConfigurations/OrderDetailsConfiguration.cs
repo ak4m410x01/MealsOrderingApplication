@@ -13,7 +13,7 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
             builder.ToTable("OrderDetails", "Product");
 
             // Config Primary Key
-            builder.HasKey(o => o.Id);
+            builder.HasKey(o => o.OrderId);
 
             // Config Properties Constraints
 
@@ -24,11 +24,6 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
                    .WithOne(c => c.OrderDetails)
                    .HasForeignKey<OrderDetails>(o => o.OrderId)
                    .IsRequired();
-
-            //[Order => Product]
-            builder.HasMany(o => o.Products)
-                   .WithMany(c => c.OrderDetails)
-                   .UsingEntity<ProductOrderDetails>();
         }
     }
 }

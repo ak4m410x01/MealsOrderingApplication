@@ -33,6 +33,7 @@ namespace MealsOrderingApplication.API.Controllers
             if (customerId is not null)
                 orders = await _unitOfWork.Orders.FilterByCustomerAsync(orders, customerId);
 
+
             PagedResponse<OrderDTODetails> response = new(
                 orders.Select(o => new OrderDTODetails
                 {
@@ -40,11 +41,16 @@ namespace MealsOrderingApplication.API.Controllers
                     Description = o.Description,
                     CustomerId = o.CustomerId,
                     CreatedAt = o.CreatedAt,
+                    TotalPrice = o.OrderDetails.TotalPrice,
+                    ProductsId = o.OrderDetails.Products.Select(p => p.ProductId).ToList(),
+                    Quantities = o.OrderDetails.Products.Select(p => p.Quantity).ToList()
                 }),
                 _httpContextAccessor.HttpContext!.Request, pageNumber, pageSize);
 
             return Ok(response);
         }
+
+
 
         [HttpPost]
         public async Task<IActionResult> AddAsync(AddOrderDTO dto)
@@ -156,6 +162,9 @@ namespace MealsOrderingApplication.API.Controllers
                     Description = order.Description,
                     CustomerId = order.CustomerId,
                     CreatedAt = order.CreatedAt,
+                    TotalPrice = order.OrderDetails?.TotalPrice ?? 0.0,
+                    ProductsId = order.OrderDetails?.Products?.Select(p => p.ProductId).ToList(),
+                    Quantities = order.OrderDetails?.Products?.Select(p => p.Quantity).ToList()
                 });
         }
     }

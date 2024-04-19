@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace MealsOrderingApplication.Data.EntitiesConfigurations
 {
-    public class ProductOrderDetailsConfiguration : IEntityTypeConfiguration<ProductOrderDetails>
+    public class OrderProductsConfiguration : IEntityTypeConfiguration<OrderProducts>
     {
-        public void Configure(EntityTypeBuilder<ProductOrderDetails> builder)
+        public void Configure(EntityTypeBuilder<OrderProducts> builder)
         {
             // Config Table Name for ProductOrderDetails Entity
-            builder.ToTable("ProductOrderDetails", "Product");
+            builder.ToTable("OrderProducts", "Product");
 
             // Config Primary Key
             builder.HasKey(o => new { o.ProductId, o.OrderDetailsId });
