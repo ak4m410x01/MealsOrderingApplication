@@ -14,10 +14,9 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
             builder.HasData(LoadRoles());
         }
 
-        private IEnumerable<IdentityRole> LoadRoles()
+        private static IEnumerable<IdentityRole> LoadRoles()
         {
-            return new List<IdentityRole>()
-            {
+            return [
                 new IdentityRole()
                 {
                     Id = Guid.NewGuid().ToString(),
@@ -35,11 +34,18 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
                 new IdentityRole()
                 {
                     Id = Guid.NewGuid().ToString(),
+                    Name = "Driver",
+                    NormalizedName = "Driver".ToUpper(),
+                    ConcurrencyStamp = Guid.NewGuid().ToString(),
+                },
+                new IdentityRole()
+                {
+                    Id = Guid.NewGuid().ToString(),
                     Name = "Admin",
                     NormalizedName = "Admin".ToUpper(),
                     ConcurrencyStamp = Guid.NewGuid().ToString(),
                 },
-            };
+            ];
         }
     }
 }

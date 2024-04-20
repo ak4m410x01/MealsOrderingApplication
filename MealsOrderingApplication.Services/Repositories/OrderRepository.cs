@@ -74,8 +74,8 @@ namespace MealsOrderingApplication.Services.Repositories
                                     .SingleOrDefaultAsync(o => o.OrderId == entity.Id) ??
                                     throw new NullReferenceException(nameof(orderDetails));
 
-                    IQueryable<OrderProducts> productOrderDetails = _context.ProductOrderDetails.Where(p => p.OrderDetailsId == orderDetails.OrderId).AsQueryable();
-                    _context.ProductOrderDetails.RemoveRange(productOrderDetails);
+                    IQueryable<OrderProducts> productOrderDetails = _context.OrderProducts.Where(p => p.OrderDetailsId == orderDetails.OrderId).AsQueryable();
+                    _context.OrderProducts.RemoveRange(productOrderDetails);
 
                     // Update Product Order Details
                     await AddOrderProductsAsync(orderDetails, updateDto.ProductsId, updateDto.Quantities!);
@@ -114,7 +114,7 @@ namespace MealsOrderingApplication.Services.Repositories
             // Add Product Order Details Info in Product Order Details Table
             foreach (var item in productsQuantities)
             {
-                await _context.ProductOrderDetails
+                await _context.OrderProducts
                         .AddAsync(new OrderProducts()
                         {
                             OrderDetailsId = orderDetails.OrderId,
@@ -144,7 +144,7 @@ namespace MealsOrderingApplication.Services.Repositories
         }
         protected virtual async Task<double> GetTotalPriceAsync(OrderDetails orderDetails)
         {
-            return await _context.ProductOrderDetails
+            return await _context.OrderProducts
                                 .Where(p => p.OrderDetailsId == orderDetails.OrderId)
                                 .Include(p => p.Product)
                                 .Select(p => new { p.Product, p.Quantity })

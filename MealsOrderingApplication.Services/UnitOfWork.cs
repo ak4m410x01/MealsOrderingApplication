@@ -5,27 +5,43 @@ using MealsOrderingApplication.Services.IServices.Response;
 
 namespace MealsOrderingApplication.Services
 {
-    public class UnitOfWork(
-        ApplicationDbContext context,
-        ICategoryRepository categories,
-        IMealRepository meals,
-        IDrinkRepository drinks,
-        IProductRepository products,
-        ICustomerRepository customers,
-        IAdminRepository admins,
-        IOrderRepository orders,
-        IReviewRepository reviews) : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork
     {
-        private readonly ApplicationDbContext _context = context;
+        private readonly ApplicationDbContext _context;
 
-        public ICategoryRepository Categories { get; private set; } = categories;
-        public IProductRepository Products { get; private set; } = products;
-        public IMealRepository Meals { get; private set; } = meals;
-        public IDrinkRepository Drinks { get; private set; } = drinks;
-        public ICustomerRepository Customers { get; private set; } = customers;
-        public IAdminRepository Admins { get; private set; } = admins;
-        public IOrderRepository Orders { get; private set; } = orders;
-        public IReviewRepository Reviews { get; private set; } = reviews;
+        public UnitOfWork(
+            ApplicationDbContext context,
+            ICategoryRepository categories,
+            IMealRepository meals,
+            IDrinkRepository drinks,
+            IProductRepository products,
+            ICustomerRepository customers,
+            IAdminRepository admins,
+            IDriverRepository drivers,
+            IOrderRepository orders,
+            IReviewRepository reviews)
+        {
+            _context = context;
+            Categories = categories;
+            Products = products;
+            Meals = meals;
+            Drinks = drinks;
+            Customers = customers;
+            Admins = admins;
+            Drivers = drivers;
+            Orders = orders;
+            Reviews = reviews;
+        }
+
+        public ICategoryRepository Categories { get; private set; }
+        public IProductRepository Products { get; private set; }
+        public IMealRepository Meals { get; private set; }
+        public IDrinkRepository Drinks { get; private set; }
+        public ICustomerRepository Customers { get; private set; }
+        public IAdminRepository Admins { get; private set; }
+        public IDriverRepository Drivers { get; private set; }
+        public IOrderRepository Orders { get; private set; }
+        public IReviewRepository Reviews { get; private set; }
 
         public int Complete()
         {

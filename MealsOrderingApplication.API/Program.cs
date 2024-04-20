@@ -8,10 +8,11 @@ using MealsOrderingApplication.Domain.Interfaces;
 using MealsOrderingApplication.Domain.Interfaces.Validations.AdminValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.ApplicationUserValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.CustomerValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.DriverValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.MealValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.OrderValidation;
 using MealsOrderingApplication.Domain.Interfaces.Validations.ProductValidation;
-using MealsOrderingApplication.Domain.Interfaces.Validations.ReviewValidation;
+using MealsOrderingApplication.Domain.Interfaces.Validations.ReviewValidation;w
 using MealsOrderingApplication.Services;
 using MealsOrderingApplication.Services.Helpers;
 using MealsOrderingApplication.Services.IServices;
@@ -20,6 +21,7 @@ using MealsOrderingApplication.Services.Services;
 using MealsOrderingApplication.Services.Validation.AdminValidation;
 using MealsOrderingApplication.Services.Validation.ApplicationUserValidation;
 using MealsOrderingApplication.Services.Validation.CustomerValidation;
+using MealsOrderingApplication.Services.Validation.DriverValidation;
 using MealsOrderingApplication.Services.Validation.MealValidation;
 using MealsOrderingApplication.Services.Validation.OrderValidation;
 using MealsOrderingApplication.Services.Validation.ProductValidation;
@@ -50,14 +52,19 @@ namespace MealsOrderingApplication.API
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             // Add Repository Services
+            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+            builder.Services.AddScoped<IDriverRepository, DriverRepository>();
+            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<IMealRepository, MealRepository>();
             builder.Services.AddScoped<IDrinkRepository, DrinkRepository>();
-            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
             // Validation Services
@@ -66,6 +73,9 @@ namespace MealsOrderingApplication.API
 
             builder.Services.AddScoped<IAddAdminValidation, AddAdminValidation>();
             builder.Services.AddScoped<IUpdateAdminValidation, UpdateAdminValidation>();
+
+            builder.Services.AddScoped<IAddDriverValidation, AddDriverValidation>();
+            builder.Services.AddScoped<IUpdateDriverValidation, UpdateDriverValidation>();
 
             builder.Services.AddScoped<IAddCustomerValidation, AddCustomerValidation>();
             builder.Services.AddScoped<IUpdateCustomerValidation, UpdateCustomerValidation>();

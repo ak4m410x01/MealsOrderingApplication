@@ -8,6 +8,9 @@
         public string CustomerId { get; set; } = default!;
         public Customer? Customer { get; set; }
 
+        public string? DriverId { get; set; }
+        public Driver? Driver { get; set; }
+
         public OrderDetails? OrderDetails { get; set; }
     }
 }

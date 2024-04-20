@@ -26,6 +26,13 @@ namespace MealsOrderingApplication.Data.EntitiesConfigurations
                    .WithMany(c => c.Orders)
                    .HasForeignKey(o => o.CustomerId)
                    .IsRequired();
+
+            //[Driver => Order]
+            builder.HasOne(o => o.Driver)
+                   .WithMany(d => d.Orders)
+                   .HasForeignKey(o => o.DriverId)
+                   .IsRequired(false);
+
         }
     }
 }

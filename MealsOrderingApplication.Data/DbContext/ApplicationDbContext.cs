@@ -11,15 +11,25 @@ namespace MealsOrderingApplication.Data.DbContext
     {
 
         // Add Db Sets
+
+        // Users
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Customer> Customers { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
+
+        // Food
         public DbSet<Category> Categories { get; set; }
         public DbSet<Meal> Meals { get; set; }
         public DbSet<Drink> Drinks { get; set; }
-        public DbSet<Customer> Customers { get; set; }
-        public DbSet<Admin> Admins { get; set; }
+
+        // Orders
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
-        public DbSet<OrderProducts> ProductOrderDetails { get; set; }
+        public DbSet<OrderProducts> OrderProducts { get; set; }
+
+        // Reviews
         public DbSet<Review> Reviews { get; set; }
+
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
