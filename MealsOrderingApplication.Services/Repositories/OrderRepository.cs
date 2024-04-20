@@ -4,6 +4,7 @@ using MealsOrderingApplication.Domain.Entities;
 using MealsOrderingApplication.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using MealsOrderingApplication.Domain.Interfaces.Filters.Entities.Orders;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace MealsOrderingApplication.Services.Repositories
 {
@@ -26,20 +27,31 @@ namespace MealsOrderingApplication.Services.Repositories
         {
             if (dto is AddOrderDTO addDto)
             {
-                // Add Order Info in Order Table
-                Order order = await AddOrderAsync(await MapAddDtoToEntity<TDto>(dto));
+                IDbContextTransaction transaction = _context.Database.BeginTransaction();
 
-                // Add Order Details Info in Order Details Table
-                OrderDetails orderDetails = await AddOrderDetailsAsync(order);
+                try
+                {
+                    // Add Order Info in Order Table
+                    Order order = await AddOrderAsync(await MapAddDtoToEntity<TDto>(dto));
 
-                await AddOrderProductsAsync(orderDetails, addDto.ProductsId, addDto.Quantities);
+                    // Add Order Details Info in Order Details Table
+                    OrderDetails orderDetails = await AddOrderDetailsAsync(order);
 
-                // Add Total Price for order products
-                orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
+                    await AddOrderProductsAsync(orderDetails, addDto.ProductsId, addDto.Quantities);
 
-                await _context.SaveChangesAsync();
+                    // Add Total Price for order products
+                    orderDetails.TotalPrice = await GetTotalPriceAsync(orderDetails);
 
-                return await Task.FromResult(order);
+                    await _context.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+
+                    return await Task.FromResult(order);
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync();
+                }
             }
 
             throw new ArgumentException("Invalid DTO type. Expected AddOrderDTO.");
