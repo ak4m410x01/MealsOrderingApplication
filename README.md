@@ -22,4 +22,4 @@ The Meals Ordering Application simplifies meal, food, and drink ordering online.
 ## 🛠 Documentation and Endpoints
 
 1. [Postman](https://documenter.getpostman.com/view/27192844/2sA3BuV8nb)
-2. [Apidog]()
+2. [Apidog](https://whfzm1fim9.apidog.io)
